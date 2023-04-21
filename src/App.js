@@ -1,21 +1,39 @@
+import { Grommet, Header, Page, PageContent, PageHeader, Text } from 'grommet';
 
-function App() {
+const theme = {
+	global: {
+		colors: {
+			brand: '#228BE6'
+		},
+		font: {
+			family: 'Roboto',
+			size: '18px',
+			height: '20px',
+		}
+	}
+}
+
+const AppBar = props => {
+	return <Header
+		background="brand"
+		pad={{ left: 'medium', right: 'small', vertical: 'small' }}
+		elevation='medium'
+		{...props}
+	/>
+};
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <Grommet theme={theme} full>
+	      <Page>
+		      <AppBar>
+			      <Text size="large">Trevor Final Project</Text>
+		      </AppBar>
+		      <PageContent>
+			      <PageHeader title="Trevor Final Project" />
+		      </PageContent>
+	      </Page>
+      </Grommet>
   );
 }
 
