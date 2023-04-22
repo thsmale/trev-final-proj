@@ -38,7 +38,20 @@ const AppBar = props => {
 	/>
 };
 
-
+class Car extends React.Component {
+	constructor(props) {
+	  super(props);
+	  this.state = {value: 0}
+	}
+	render() {
+		return (
+			<div>
+				<Text>{this.state.value}</Text>
+				<Button label='+' onClick={() => {this.setState({value: this.state.value += 1})}}/>
+			</div>
+		)
+	}
+  }
 
 const Input = () => {
 	const [value, setValue] = React.useState({});
@@ -47,50 +60,29 @@ const Input = () => {
 			<TextInput
 				placeholder="Name"
 				value={value}
-				onChange={event => setValue(event.target.value)}
+				onChange={event => setValue({ name: event.target.value, ...value })}
 			/>
 			<TextInput
 				placeholder="Item"
 				value={value}
-				onChange={event => setValue(event.target.value)}
+				onChange={event => setValue({ item: event.target.value, ...value })}
 			/>
 			<TextInput
 				placeholder="Price"
 				textAlign='$'
 				value={value}
-				onChange={event => setValue(event.target.value)}
+				onChange={event => setValue({ price: event.target.value, ...value })}
 			/>
 		</Grid>
 	);
 }
 
-const x = (props) => {
-	return (
-		React.Children.toArray(props)
-		//<React.Fragment>
-			//props
-		//</React.Fragment>
-	)
-}
-
 const App = () => {
 	const [dark, setDark] = useState(false);
-	const [rows, setRows] = useState([<Input/>, <Input/>, <Input/>])
-					//<Button icon={<Add />} onClick={setRows => {Input, ...{rows}}}/>
 	const [numRows, setNumRows] = useState([1])
 	const listItems = numRows.map((numRows) =>
 		<Input/>
 	);
-	const z = 10;
-	const listRows = () => {
-		const c = []
-		for (let i = 0; i < z; ++i) {
-			console.log('hello world')
-			c.push(<Input/>)
-		}
-		return c;
-	}
-	const addRow = () => setNumRows([1, ...numRows])
 
 	return (
 		<Grommet theme={theme} full themeMode={dark ? 'dark' : 'light'}>
@@ -120,16 +112,11 @@ const App = () => {
 					<div>
 						{listItems}
 					</div>
-					<x>
-						{rows}
-					</x>
-					<div>
-						{listRows}
-					</div>
 				<Button label='+' onClick={() => setNumRows([1, ...numRows])}/>
+				<Button label='Submit' />
+				<Car/>
 				</PageContent>
 			</Page>
-			React.Children.toArray(components)
 		</Grommet>
 	);
 }
