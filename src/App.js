@@ -43,6 +43,7 @@ class Car extends React.Component {
 	  super(props);
 	  this.state = {value: 0}
 	}
+	getVal() { return this.state.value }
 	render() {
 		return (
 			<div>
@@ -53,36 +54,89 @@ class Car extends React.Component {
 	}
   }
 
-const Input = () => {
-	const [value, setValue] = React.useState({});
+const handleChange = (i, data, setState) => {
+
+}
+
+const Input = (props) => {
+	const [value, setValue] = React.useState({ name: '', item: '', price: '' });
 	return (
 		<Grid columns="medium" gap="small" pad={{ bottom: "large" }}>
 			<TextInput
 				placeholder="Name"
-				value={value}
-				onChange={event => setValue({ name: event.target.value, ...value })}
+				value={value.name}
+				onChange={ (event) => {
+					const name = event.target.value
+					setValue({...value, name })
+					props.data[props.index] = { 
+						...props.data[props.index], 
+						name
+					}
+					props.setRows(props.data)
+					console.log(props.data)
+				}}
+				//onChange={event => props.setRows([{ ...props.data, name: event.target.value.name }])}
 			/>
 			<TextInput
 				placeholder="Item"
-				value={value}
-				onChange={event => setValue({ item: event.target.value, ...value })}
+				value={value.item}
+				onChange={ (event) => {
+					const item = event.target.value
+					setValue({...value, item })
+					props.data[props.index] = { 
+						...props.data[props.index], 
+						item
+					}
+					props.setRows(props.data)
+					console.log(props.data)
+				}}
 			/>
 			<TextInput
 				placeholder="Price"
 				textAlign='$'
-				value={value}
-				onChange={event => setValue({ price: event.target.value, ...value })}
+				value={value.price}
+				onChange={ (event) => {
+					const price = event.target.value
+					setValue({...value, price })
+					props.data[props.index] = { 
+						...props.data[props.index], 
+						price
+					}
+					props.setRows(props.data)
+					console.log(props.data)
+				}}
 			/>
 		</Grid>
 	);
 }
 
+const Test = (props) => {
+	return (
+		<Button label='Click here to change value' onClick={() => { props.state({ x: 69 }) }}/>
+	)
+}
+
 const App = () => {
+	const row = {
+		name: '',
+		item: '',
+		price: ''
+	}
 	const [dark, setDark] = useState(false);
-	const [numRows, setNumRows] = useState([1])
-	const listItems = numRows.map((numRows) =>
-		<Input/>
+	const [rows, setRows] = useState([row])
+	const [data, setData] = useState({})
+	const listItems = [];
+	for (let i = 0; i < rows.length; ++i) {
+		listItems.push(
+			<Input index={i} data={rows} setRows={setRows} />
+		);
+	}
+	/*
+	const listItems = rows.map((row) => 
+		<Input data={row} setRows={setRows} />
 	);
+	*/
+	const [myTest, setMyTest] = useState({x: 1})
 
 	return (
 		<Grommet theme={theme} full themeMode={dark ? 'dark' : 'light'}>
@@ -112,9 +166,11 @@ const App = () => {
 					<div>
 						{listItems}
 					</div>
-				<Button label='+' onClick={() => setNumRows([1, ...numRows])}/>
-				<Button label='Submit' />
+				<Button label='+' onClick={() => setRows([...rows, row])}/>
+				<Button label='Submit' onClick={() => console.log(data)}/>
 				<Car/>
+				<Test value={myTest} state={setMyTest}/>
+				<Text>value = {myTest.x}</Text>
 				</PageContent>
 			</Page>
 		</Grommet>
