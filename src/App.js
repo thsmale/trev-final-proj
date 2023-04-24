@@ -38,26 +38,6 @@ const AppBar = props => {
 	/>
 };
 
-class Car extends React.Component {
-	constructor(props) {
-	  super(props);
-	  this.state = {value: 0}
-	}
-	getVal() { return this.state.value }
-	render() {
-		return (
-			<div>
-				<Text>{this.state.value}</Text>
-				<Button label='+' onClick={() => {this.setState({value: this.state.value += 1})}}/>
-			</div>
-		)
-	}
-  }
-
-const handleChange = (i, data, setState) => {
-
-}
-
 const Input = (props) => {
 	const [value, setValue] = React.useState({ name: '', item: '', price: '' });
 	return (
@@ -73,9 +53,7 @@ const Input = (props) => {
 						name
 					}
 					props.setRows(props.data)
-					console.log(props.data)
 				}}
-				//onChange={event => props.setRows([{ ...props.data, name: event.target.value.name }])}
 			/>
 			<TextInput
 				placeholder="Item"
@@ -88,7 +66,6 @@ const Input = (props) => {
 						item
 					}
 					props.setRows(props.data)
-					console.log(props.data)
 				}}
 			/>
 			<TextInput
@@ -103,17 +80,10 @@ const Input = (props) => {
 						price
 					}
 					props.setRows(props.data)
-					console.log(props.data)
 				}}
 			/>
 		</Grid>
 	);
-}
-
-const Test = (props) => {
-	return (
-		<Button label='Click here to change value' onClick={() => { props.state({ x: 69 }) }}/>
-	)
 }
 
 const App = () => {
@@ -123,20 +93,13 @@ const App = () => {
 		price: ''
 	}
 	const [dark, setDark] = useState(false);
-	const [rows, setRows] = useState([row])
-	const [data, setData] = useState({})
+	const [data, setData] = useState([row])
 	const listItems = [];
-	for (let i = 0; i < rows.length; ++i) {
+	for (let i = 0; i < data.length; ++i) {
 		listItems.push(
-			<Input index={i} data={rows} setRows={setRows} />
+			<Input index={i} data={data} setRows={setData} />
 		);
 	}
-	/*
-	const listItems = rows.map((row) => 
-		<Input data={row} setRows={setRows} />
-	);
-	*/
-	const [myTest, setMyTest] = useState({x: 1})
 
 	return (
 		<Grommet theme={theme} full themeMode={dark ? 'dark' : 'light'}>
@@ -166,11 +129,8 @@ const App = () => {
 					<div>
 						{listItems}
 					</div>
-				<Button label='+' onClick={() => setRows([...rows, row])}/>
+				<Button label='+' onClick={() => setData([...data, row])}/>
 				<Button label='Submit' onClick={() => console.log(data)}/>
-				<Car/>
-				<Test value={myTest} state={setMyTest}/>
-				<Text>value = {myTest.x}</Text>
 				</PageContent>
 			</Page>
 		</Grommet>
