@@ -5,7 +5,6 @@ import {
 	DateInput,
 	Grid,
 	Grommet,
-	grommet,
 	Header,
 	Heading,
 	Page,
@@ -15,30 +14,7 @@ import {
 	TextInput
 } from 'grommet';
 import { hpe } from 'grommet-theme-hpe';
-import { deepMerge } from 'grommet/utils';
 import { Moon, Sun, Add } from 'grommet-icons';
-
-const theme = deepMerge(grommet, {
-	global: {
-		colors: {
-			brand: '#228BE6'
-		},
-		font: {
-			family: 'Roboto',
-			size: '18px',
-			height: '20px',
-		}
-	}
-});
-
-const AppBar = props => {
-	return <Header
-		background="brand"
-		pad={{ left: 'medium', right: 'small', vertical: 'small' }}
-		elevation='medium'
-		{...props}
-	/>
-};
 
 const Input = (props) => {
 	const [value, setValue] = React.useState({ name: '', item: '', price: '' });
@@ -108,8 +84,8 @@ const App = () => {
 	return (
 		<Grommet theme={hpe} full themeMode={dark ? 'dark' : 'light'}>
 			<Page>
-				<AppBar>
-					<Text size="large">Trevor Final Project</Text>
+				<Header background='brand'>
+					<Heading>Trevor Final Project</Heading>
 					<Button
 						a11yTitle={dark ? 'Light mode' : 'Dark mode'}
 						icon={dark ? <Moon /> : <Sun />}
@@ -127,7 +103,7 @@ const App = () => {
 							plain: true,
 						}}
 					/>
-				</AppBar>
+				</Header>
 				<PageContent>
 					<PageHeader 
 						title="Trevor Final Project"
