@@ -14,6 +14,7 @@ import {
 	Text,
 	TextInput
 } from 'grommet';
+import { hpe } from 'grommet-theme-hpe';
 import { deepMerge } from 'grommet/utils';
 import { Moon, Sun, Add } from 'grommet-icons';
 
@@ -105,7 +106,7 @@ const App = () => {
 	}
 
 	return (
-		<Grommet theme={theme} full themeMode={dark ? 'dark' : 'light'}>
+		<Grommet theme={hpe} full themeMode={dark ? 'dark' : 'light'}>
 			<Page>
 				<AppBar>
 					<Text size="large">Trevor Final Project</Text>
