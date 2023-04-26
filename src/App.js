@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import {
+	Accordion,
+	AccordionPanel,
 	Box,
 	Button,
 	DateInput,
@@ -15,6 +17,32 @@ import {
 } from 'grommet';
 import { hpe } from 'grommet-theme-hpe';
 import { Moon, Sun, Add } from 'grommet-icons';
+
+const AppBar = (props) => {
+	const { dark, setDark}  = props;
+	return (
+		<Header background='brand'>
+			<Heading>Trevor Final Project</Heading>
+			<Button
+				a11yTitle={dark ? 'Light mode' : 'Dark mode'}
+				icon={dark ? <Moon /> : <Sun />}
+				onClick={() => setDark(!dark)}
+				tip={{
+					content: (
+						<Box
+							pad='small'
+							round='small'
+							background={dark ? 'dark-1' : 'light-3'}
+						>
+							{dark ? 'Light mode' : 'Dark mode'}
+						</Box>
+					),
+					plain: true,
+				}}
+			/>
+		</Header>
+	);
+}
 
 const Input = (props) => {
 	const [value, setValue] = React.useState({ name: '', item: '', price: '' });
@@ -71,7 +99,6 @@ const App = () => {
 		price: ''
 	}
 	const [dark, setDark] = useState(false);
-
 	const [date, setDate] = useState((new Date()).toISOString());
 	const [data, setData] = useState([row, row, row])
 	const listItems = [];
@@ -84,26 +111,7 @@ const App = () => {
 	return (
 		<Grommet theme={hpe} full themeMode={dark ? 'dark' : 'light'}>
 			<Page>
-				<Header background='brand'>
-					<Heading>Trevor Final Project</Heading>
-					<Button
-						a11yTitle={dark ? 'Light mode' : 'Dark mode'}
-						icon={dark ? <Moon /> : <Sun />}
-						onClick={() => setDark(!dark)}
-						tip={{
-							content: (
-								<Box
-									pad='small'
-									round='small'
-									background={dark ? 'dark-1' : 'light-3'}
-								>
-									{dark ? 'Light mode' : 'Dark mode'}
-								</Box>
-							),
-							plain: true,
-						}}
-					/>
-				</Header>
+				<AppBar dark={dark} setDark={setDark}/>
 				<PageContent>
 					<PageHeader 
 						title="Trevor Final Project"
@@ -111,17 +119,21 @@ const App = () => {
 							<Box>Easily calculate how much much everyone owes each other after an event such as a vaction.</Box>
 						}
 					/>
-					<Box direction='row' gap='small' pad={{bottom: 'small'}}>
-						<TextInput placeholder="Event i.e. restaurant, game, bar"/>
-						<DateInput
-							format="mm/dd/yyyy"
-							value={date}
-							onChange={({ value }) => { setDate(value) }}
-						/>
-					</Box>
-					{listItems}
-					<Box gap='small'>
-						<Button label='Add row' onClick={() => setData([...data, row])}/>
+					<Accordion>
+						<AccordionPanel>
+							<Box direction='row' gap='small' pad={{bottom: 'small'}}>
+								<TextInput placeholder="Event i.e. restaurant, game, bar"/>
+								<DateInput
+									format="mm/dd/yyyy"
+									value={date}
+									onChange={({ value }) => { setDate(value) }}
+								/>
+							</Box>
+							{listItems}
+							<Button label='Add row' onClick={() => setData([...data, row])}/>
+						</AccordionPanel>
+					</Accordion>
+					<Box>
 						<Button label='Add event' onClick={() => console.log('yolo')}/>
 						<Button label='Submit' onClick={() => console.log(data)}/>
 					</Box>
