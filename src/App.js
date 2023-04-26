@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
 	Box,
 	Button,
+	DateInput,
 	Grid,
 	Grommet,
 	grommet,
@@ -41,7 +42,7 @@ const AppBar = props => {
 const Input = (props) => {
 	const [value, setValue] = React.useState({ name: '', item: '', price: '' });
 	return (
-		<Grid columns="medium" gap="small" pad={{ bottom: "large" }}>
+		<Grid columns="medium" gap="small" pad={{ bottom: "small" }}>
 			<TextInput
 				placeholder="Name"
 				value={value.name}
@@ -93,7 +94,9 @@ const App = () => {
 		price: ''
 	}
 	const [dark, setDark] = useState(false);
-	const [data, setData] = useState([row])
+
+	const [date, setDate] = useState((new Date()).toISOString());
+	const [data, setData] = useState([row, row, row])
 	const listItems = [];
 	for (let i = 0; i < data.length; ++i) {
 		listItems.push(
@@ -125,12 +128,26 @@ const App = () => {
 					/>
 				</AppBar>
 				<PageContent>
-					<PageHeader title="Trevor Final Project" />
-					<div>
-						{listItems}
-					</div>
-				<Button label='+' onClick={() => setData([...data, row])}/>
-				<Button label='Submit' onClick={() => console.log(data)}/>
+					<PageHeader 
+						title="Trevor Final Project"
+						subtitle={
+							<Box>Easily calculate how much much everyone owes each other after an event such as a vaction.</Box>
+						}
+					/>
+					<Box direction='row' gap='small' pad={{bottom: 'small'}}>
+						<TextInput placeholder="Event i.e. restaurant, game, bar"/>
+						<DateInput
+							format="mm/dd/yyyy"
+							value={date}
+							onChange={({ value }) => { setDate(value) }}
+						/>
+					</Box>
+					{listItems}
+					<Box gap='small'>
+						<Button label='Add row' onClick={() => setData([...data, row])}/>
+						<Button label='Add event' onClick={() => console.log('yolo')}/>
+						<Button label='Submit' onClick={() => console.log(data)}/>
+					</Box>
 				</PageContent>
 			</Page>
 		</Grommet>
