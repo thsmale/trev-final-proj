@@ -85,20 +85,16 @@ const temp = (props) => {
 	)
 }
 
-class Tab {
-	constructor() {
-		this.eventName = '';
-		this.date = new Date().toISOString();
-		this.data = [];
-	}
+function Bill() {
+	this.eventName = '';
+	this.date = new Date().toISOString();
+	this.data = [];
 }
 
-class Row {
-	constructor() {
-		this.name = '';
-		this.item = '';
-		this.price = '';
-	}
+function Row() {
+	this.name = '';
+	this.item = '';
+	this.price = '';
 }
 
 const App = () => {
@@ -114,9 +110,9 @@ const App = () => {
 	}
 	const tabIndex = 0;
 	const [groupTabs, setGroupTabs] = useState([tab, tab, tab])
-	const listItems = [];
+	const userInterfaceRows = [];
 	for (let i = 0; i < groupTabs.length; ++i) {
-		listItems.push(
+		userInterfaceRows.push(
 			<Input index={i} tabs={groupTabs} setTabs={setGroupTabs} />
 		);
 	}
@@ -143,7 +139,7 @@ const App = () => {
 									onChange={({ value }) => tab.date = value }
 								/>
 							</Box>
-							{listItems}
+							{userInterfaceRows}
 							<Button label='Add row' onClick={() => groupTabs.push(new Row())}/>
 						</Tab>
 					</Tabs>
