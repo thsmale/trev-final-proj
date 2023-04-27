@@ -16,26 +16,46 @@ import {
 import { hpe } from 'grommet-theme-hpe';
 import { subtitle } from './data.js';
 
+// Should make a function called settleTab ahha
+const setTab = (name, tabs, index) => {
+	//reactState({...value, name })
+	return (
+		tabs[index] = { 
+			...tabs[index], 
+			name
+		}
+	);
+}
+
 const Input = (props) => {
-	const [value, setValue] = React.useState({ name: '', item: '', price: '' });
 	return (
 		<Grid columns="medium" gap="small" pad={{ bottom: "small" }}>
 			<TextInput
 				placeholder="Name"
-				value={value.name}
 				onChange={ (event) => {
-					const name = event.target.value
-					setValue({...value, name })
-					props.data[props.index] = { 
-						...props.data[props.index], 
-						name
-					}
-					props.setRows(props.data)
+					console.log(event.target.value) 
+					console.log(props.tabs)
+					console.log(props.index);
+
+					/*
+					props.setTabs(setTab(
+						event.target.value, props.tabs, props.index 
+					))
+					*/
 				}}
 			/>
+			 
+		</Grid>
+	);
+}
+
+const temp = (props) => {
+	return (
+		5
+		/*
+		<Grid>
 			<TextInput
 				placeholder="Item"
-				value={value.item}
 				onChange={ (event) => {
 					const item = event.target.value
 					setValue({...value, item })
@@ -61,28 +81,48 @@ const Input = (props) => {
 				}}
 			/>
 		</Grid>
-	);
+		*/
+	)
+}
+
+class Tab {
+	constructor() {
+		this.eventName = '';
+		this.date = new Date().toISOString();
+		this.data = [];
+	}
+}
+
+class Row {
+	constructor() {
+		this.name = '';
+		this.item = '';
+		this.price = '';
+	}
 }
 
 const App = () => {
-	const row = {
+	const tab = {
+		eventName: '',
+		date: new Date().toISOString(),
+		data: []
+	}
+	const metaData = {
 		name: '',
 		item: '',
 		price: ''
 	}
-	const [dark, setDark] = useState(false);
-	const [eventName, setEventName] = useState('Event name');
-	const [date, setDate] = useState((new Date()).toISOString());
-	const [data, setData] = useState([row, row, row])
+	const tabIndex = 0;
+	const [groupTabs, setGroupTabs] = useState([tab, tab, tab])
 	const listItems = [];
-	for (let i = 0; i < data.length; ++i) {
+	for (let i = 0; i < groupTabs.length; ++i) {
 		listItems.push(
-			<Input index={i} data={data} setRows={setData} />
+			<Input index={i} tabs={groupTabs} setTabs={setGroupTabs} />
 		);
 	}
 
 	return (
-		<Grommet theme={hpe} full themeMode={dark ? 'dark' : 'light'}>
+		<Grommet theme={hpe}>
 			<Page>
 				<PageContent>
 					<PageHeader 
@@ -91,27 +131,25 @@ const App = () => {
 							<Box>{subtitle}</Box>
 						}
 					/>
-					<Tabs>
-						<Tab title={eventName}>
+					<Tabs onActive={ (index) => { tabIndex = index }}>
+						<Tab title={tab.eventName || 'Create Event'}>
 							<Box direction='row' gap='small' pad={{bottom: 'small'}}>
 								<TextInput 
 									placeholder="Event i.e. restaurant, game, bar"
-									value={eventName}
-									onChange={(event) => setEventName(event.target.value)}
+									onChange={ (event) => tab.eventName = event.target.value }
 								/>
 								<DateInput
 									format="mm/dd/yyyy"
-									value={date}
-									onChange={({ value }) => { setDate(value) }}
+									onChange={({ value }) => tab.date = value }
 								/>
 							</Box>
 							{listItems}
-							<Button label='Add row' onClick={() => setData([...data, row])}/>
+							<Button label='Add row' onClick={() => groupTabs.push(new Row())}/>
 						</Tab>
 					</Tabs>
 					<Box>
-						<Button label='Create Event' onClick={() => console.log(data)}/>
-						<Button label='Submit' onClick={() => console.log(data)}/>
+						<Button label='Create Event' onClick={() => console.log('Create event')}/>
+						<Button label='Submit' onClick={() => console.log('Submit!!!')}/>
 					</Box>
 				</PageContent>
 			</Page>
