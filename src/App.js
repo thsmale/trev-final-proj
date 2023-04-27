@@ -15,28 +15,28 @@ import {
 } from 'grommet';
 import { hpe } from 'grommet-theme-hpe';
 import { subtitle } from './data.js';
+import { Bill, Row } from './model.js';
 
 // Should make a function called settleTab ahha
 const setTab = (name, tabs, index) => {
 	//reactState({...value, name })
 	return (
-		tabs[index] = { 
-			...tabs[index], 
+		tabs[index] = {
+			...tabs[index],
 			name
 		}
 	);
 }
 
-const Input = (props) => {
+const tabInputUserInterface = (props) => {
 	return (
 		<Grid columns="medium" gap="small" pad={{ bottom: "small" }}>
 			<TextInput
 				placeholder="Name"
-				onChange={ (event) => {
-					console.log(event.target.value) 
+				onChange={(event) => {
+					console.log(event.target.value)
 					console.log(props.tabs)
 					console.log(props.index);
-
 					/*
 					props.setTabs(setTab(
 						event.target.value, props.tabs, props.index 
@@ -44,7 +44,7 @@ const Input = (props) => {
 					*/
 				}}
 			/>
-			 
+
 		</Grid>
 	);
 }
@@ -54,18 +54,7 @@ const temp = (props) => {
 		5
 		/*
 		<Grid>
-			<TextInput
-				placeholder="Item"
-				onChange={ (event) => {
-					const item = event.target.value
-					setValue({...value, item })
-					props.data[props.index] = { 
-						...props.data[props.index], 
-						item
-					}
-					props.setRows(props.data)
-				}}
-			/>
+
 			<TextInput
 				placeholder="Price"
 				textAlign='$'
@@ -85,16 +74,35 @@ const temp = (props) => {
 	)
 }
 
-function Bill() {
-	this.eventName = '';
-	this.date = new Date().toISOString();
-	this.data = [];
-}
+const BillUserInterface = (props) => {
+	const bill = new Bill();
+	const userInterfaceTabs = [];
+	for (let i = 0; i < bill.tabs.length; ++i) {
+		userInterfaceTabs.push(
+			<tabInputUserInterface
+				index={i} 
+				tabs={groupTabs} 
+				setTabs={setGroupTabs} 
+			/>
+		);
+	}
 
-function Row() {
-	this.name = '';
-	this.item = '';
-	this.price = '';
+	return (
+		<Tab title={ bill.eventName === '' ? bill.eventName : 'Create Event' }>
+			<Box direction='row' gap='small' pad={{ bottom: 'small' }}>
+				<TextInput
+					placeholder="Event i.e. restaurant, game, bar"
+					onChange={(event) => bill.eventName = event.target.value}
+				/>
+				<DateInput
+					format="mm/dd/yyyy"
+					onChange={({ value }) => bill.date = value}
+				/>
+			</Box>
+			{userInterfaceTabs}
+			<Button label='Add row' onClick={() => bill.tabs.push(new Row())} />
+		</Tab>
+	)
 }
 
 const App = () => {
@@ -109,7 +117,7 @@ const App = () => {
 		price: ''
 	}
 	const tabIndex = 0;
-	const [groupTabs, setGroupTabs] = useState([tab, tab, tab])
+	const [Bills, setBills] = useState([tab, tab, tab])
 	const userInterfaceRows = [];
 	for (let i = 0; i < groupTabs.length; ++i) {
 		userInterfaceRows.push(
@@ -121,31 +129,18 @@ const App = () => {
 		<Grommet theme={hpe}>
 			<Page>
 				<PageContent>
-					<PageHeader 
+					<PageHeader
 						title="Trevor Final Project"
 						subtitle={
 							<Box>{subtitle}</Box>
 						}
 					/>
-					<Tabs onActive={ (index) => { tabIndex = index }}>
-						<Tab title={tab.eventName || 'Create Event'}>
-							<Box direction='row' gap='small' pad={{bottom: 'small'}}>
-								<TextInput 
-									placeholder="Event i.e. restaurant, game, bar"
-									onChange={ (event) => tab.eventName = event.target.value }
-								/>
-								<DateInput
-									format="mm/dd/yyyy"
-									onChange={({ value }) => tab.date = value }
-								/>
-							</Box>
-							{userInterfaceRows}
-							<Button label='Add row' onClick={() => groupTabs.push(new Row())}/>
-						</Tab>
+					<Tabs onActive={(index) => { tabIndex = index }}>
+						<BillUserInterface/>
 					</Tabs>
 					<Box>
-						<Button label='Create Event' onClick={() => console.log('Create event')}/>
-						<Button label='Submit' onClick={() => console.log('Submit!!!')}/>
+						<Button label='Create Event' onClick={() => console.log('Create event')} />
+						<Button label='Submit' onClick={() => console.log('Submit!!!')} />
 					</Box>
 				</PageContent>
 			</Page>
