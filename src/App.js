@@ -32,7 +32,7 @@ const tabInputUserInterface = (props) => {
 	return (
 		<Grid columns="medium" gap="small" pad={{ bottom: "small" }}>
 			<TextInput
-				placeholder="Name"
+				placeholder="Name i.e trevor"
 				onChange={(event) => {
 					console.log(event.target.value)
 					console.log(props.tabs)
@@ -44,87 +44,66 @@ const tabInputUserInterface = (props) => {
 					*/
 				}}
 			/>
+			<TextInput
+				placeholder="Item i.e pizza"
+				onChange={ (event) => {
+					console.log(event)
+				}}
+			/>
+			<TextInput
+				placeholder="Price 0.00"
+				textAlign='$'
+				onChange={ (event) => {
+					console.log(event)
+				}}
+			/>
 
 		</Grid>
 	);
 }
-
-const temp = (props) => {
-	return (
-		5
-		/*
-		<Grid>
-
-			<TextInput
-				placeholder="Price"
-				textAlign='$'
-				value={value.price}
-				onChange={ (event) => {
-					const price = event.target.value
-					setValue({...value, price })
-					props.data[props.index] = { 
-						...props.data[props.index], 
-						price
-					}
-					props.setRows(props.data)
-				}}
-			/>
-		</Grid>
-		*/
-	)
-}
-
 const BillUserInterface = (props) => {
-	const bill = new Bill();
+	const [bill, setBill] = React.useState(new Bill());
 	const userInterfaceTabs = [];
 	for (let i = 0; i < bill.tabs.length; ++i) {
 		userInterfaceTabs.push(
 			<tabInputUserInterface
 				index={i} 
-				tabs={groupTabs} 
-				setTabs={setGroupTabs} 
+				tabs={bill.tabs} 
+				// TODO: Pass some kind of state in here 
 			/>
 		);
 	}
 
 	return (
-		<Tab title={ bill.eventName === '' ? bill.eventName : 'Create Event' }>
+		<Tab title={ bill.eventName !== '' ? bill.eventName : 'Create Event' }>
 			<Box direction='row' gap='small' pad={{ bottom: 'small' }}>
 				<TextInput
 					placeholder="Event i.e. restaurant, game, bar"
-					onChange={(event) => bill.eventName = event.target.value}
+					onChange={ (event) => {
+						setBill({
+							...bill,
+							eventName: event.target.value
+						})
+					}}
 				/>
 				<DateInput
 					format="mm/dd/yyyy"
-					onChange={({ value }) => bill.date = value}
+					onChange={({ value }) => {
+						setBill({
+							...bill,
+							date: value,
+						})
+					}}
 				/>
 			</Box>
-			{userInterfaceTabs}
+			{tabInputUserInterface}
 			<Button label='Add row' onClick={() => bill.tabs.push(new Row())} />
 		</Tab>
 	)
 }
 
 const App = () => {
-	const tab = {
-		eventName: '',
-		date: new Date().toISOString(),
-		data: []
-	}
-	const metaData = {
-		name: '',
-		item: '',
-		price: ''
-	}
 	const tabIndex = 0;
-	const [Bills, setBills] = useState([tab, tab, tab])
-	const userInterfaceRows = [];
-	for (let i = 0; i < groupTabs.length; ++i) {
-		userInterfaceRows.push(
-			<Input index={i} tabs={groupTabs} setTabs={setGroupTabs} />
-		);
-	}
-
 	return (
 		<Grommet theme={hpe}>
 			<Page>
