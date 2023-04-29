@@ -12,6 +12,7 @@ import {
 	PageHeader,
 	Tabs,
 	Tab,
+	Text,
 	TextInput
 } from 'grommet';
 import { hpe } from 'grommet-theme-hpe';
@@ -64,23 +65,21 @@ const TabInputUserInterface = (props) => {
 const BillUserInterface = (props) => {
 	const [bill, setBill] = useState(new Bill());
 	const [userInterfaceTabs, setUserInterfaceTabs] = useState([]);
-	bill.tabs.map(bill => {
-		console.log(bill)
-	})
+	//const userInterfaceTabs = []
+	/*
 	for (let i = 0; i < bill.tabs.length; ++i) {
 		const rows = [];
 		rows.push(
 			<TabInputUserInterface
-			 /*
 				index={i} 
 				tabs={bill.tabs} 
-				*/
 				// TODO: Pass some kind of state in here 
 			/>
 		);
-		console.log('hi')
+		console.log(rows.length)
 		setUserInterfaceTabs(rows)
 	}
+	*/
 	return (
 		<Tab title={ bill.eventName !== '' ? bill.eventName : 'Create Event' }>
 		<Form
@@ -88,6 +87,7 @@ const BillUserInterface = (props) => {
 			onReset={() => console.log('reset')}
 			onSubmit={({ value }) => {console.log('submittt')}}
 		>
+		<Grid columns="medium" gap="none" pad={{ bottom: "small" }}>
 		<FormField name="Event" htmlFor="text-input-id" label="Name">
 			<TextInput id='text-input-id' name='name'
 					placeholder="Event i.e. restaurant, game, bar"
@@ -110,14 +110,36 @@ const BillUserInterface = (props) => {
 					}}
 				/>
 		</FormField>
+		</Grid>
+		<Text>
+			Name
+		</Text>
+		<TextInput
+					placeholder="Event i.e. restaurant, game, bar"
+					onChange={ (event) => {
+						setBill({
+							...bill,
+							eventName: event.target.value
+						})
+					}}
+				/>
+		
 		<FormField name='Tabs' htmlFor='tab-input' label='Tabs'>
 			<Box pad={{ top: 'small' }}>
-				<TabInputUserInterface pad={{ top: 'small' }}/>
-
+				<TabInputUserInterface/>
 			</Box>
+			<TabInputUserInterface/>
+			{userInterfaceTabs}
 		</FormField>
 		</Form>
-			<Button label='Add row' onClick={() => bill.tabs.push(new Row())} />
+			<Button label='Add row' onClick={() => {
+				bill.tabs.push(new Row()) 
+				console.log(bill.tabs.length)
+bill.tabs.map(bill => {
+		setUserInterfaceTabs([...userInterfaceTabs, <TabInputUserInterface/>])
+		console.log(userInterfaceTabs.length)
+	})
+			}}/>
 					</Tab>
 	)
 }
@@ -125,7 +147,7 @@ const BillUserInterface = (props) => {
 const App = () => {
 	let tabIndex = 0;
 	return (
-		<Grommet theme={hpe}>
+		<Grommet theme={hpe} full themeMode='dark'>
 			<Page>
 				<PageContent>
 					<PageHeader
