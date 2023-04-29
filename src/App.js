@@ -65,31 +65,12 @@ const TabInputUserInterface = (props) => {
 const BillUserInterface = (props) => {
 	const [bill, setBill] = useState(new Bill());
 	const [userInterfaceTabs, setUserInterfaceTabs] = useState([]);
-	//const userInterfaceTabs = []
-	/*
-	for (let i = 0; i < bill.tabs.length; ++i) {
-		const rows = [];
-		rows.push(
-			<TabInputUserInterface
-				index={i} 
-				tabs={bill.tabs} 
-				// TODO: Pass some kind of state in here 
-			/>
-		);
-		console.log(rows.length)
-		setUserInterfaceTabs(rows)
-	}
-	*/
 	return (
-		<Tab title={ bill.eventName !== '' ? bill.eventName : 'Create Event' }>
-		<Form
-			onChange={nextValue => console.log(nextValue)}
-			onReset={() => console.log('reset')}
-			onSubmit={({ value }) => {console.log('submittt')}}
-		>
-		<Grid columns="medium" gap="none" pad={{ bottom: "small" }}>
-		<FormField name="Event" htmlFor="text-input-id" label="Name">
-			<TextInput id='text-input-id' name='name'
+		<Tab title={ bill.eventName !== '' ? bill.eventName : 'Create Bill' }>
+		<Grid columns='medium' gap='small' pad={{top: 'small'}}>
+			<Box>
+				<Text>Event</Text>
+					<TextInput 
 					placeholder="Event i.e. restaurant, game, bar"
 					onChange={ (event) => {
 						setBill({
@@ -98,9 +79,16 @@ const BillUserInterface = (props) => {
 						})
 					}}
 				/>
-		</FormField>
-		<FormField name="Date" htmlFor="date-input-id" label='Date'>
-				<DateInput id='date-input-id' name='date'
+			</Box>
+			<Box>
+				<Text>Owner name</Text>
+				<TextInput
+					placeholder='Owner i.e Trevor'
+				/>
+			</Box>
+			<Box>
+				<Text>Date</Text>
+				<DateInput 
 					format="mm/dd/yyyy"
 					onChange={({ value }) => {
 						setBill({
@@ -109,29 +97,25 @@ const BillUserInterface = (props) => {
 						})
 					}}
 				/>
-		</FormField>
+			</Box>
+			
+		</Grid>  
+		<Grid columns='medium' pad={{top: 'medium'}}>
+			<Box alignContent='center' align='center'>
+				<Text>Event</Text>
+			</Box>
+			<Box align='center'>
+				<Text>Item</Text>
+			</Box>
+			<Box align='center'>
+				<Text>Price</Text>
+			</Box>
 		</Grid>
-		<Text>
-			Name
-		</Text>
-		<TextInput
-					placeholder="Event i.e. restaurant, game, bar"
-					onChange={ (event) => {
-						setBill({
-							...bill,
-							eventName: event.target.value
-						})
-					}}
-				/>
-		
-		<FormField name='Tabs' htmlFor='tab-input' label='Tabs'>
-			<Box pad={{ top: 'small' }}>
+				<Box /*pad={{ top: 'small' }}*/>
 				<TabInputUserInterface/>
 			</Box>
 			<TabInputUserInterface/>
 			{userInterfaceTabs}
-		</FormField>
-		</Form>
 			<Button label='Add row' onClick={() => {
 				bill.tabs.push(new Row()) 
 				console.log(bill.tabs.length)
