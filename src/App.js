@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import {
+	Accordion,
+	AccordionPanel,
 	Box,
 	Button,
 	DateInput,
-	Form,
-	FormField,
 	Grid,
 	Grommet,
 	Page,
@@ -12,54 +12,24 @@ import {
 	PageHeader,
 	Tabs,
 	Tab,
+	Table,
+	TableBody,
+	TableCell,
+	TableHeader,
+	TableRow,
 	Text,
-	TextInput
+	TextInput,
 } from 'grommet';
 import { hpe } from 'grommet-theme-hpe';
 import { subtitle } from './data.js';
 import { Bill, Row } from './model.js';
 
-// Should make a function called settleTab ahha
-const setTab = (val, tabs, index) => {
-	//reactState({...value, name })
-	console.log('------setTab--------')
-	console.log(val)
-	console.log(tabs)
-	console.log(index)
-	console.log('--------------------')
-	tabs[index][val] = val 
-	return (
-		tabs[index] = {
-			...tabs[index],
-			val	
-		}
-	);
-
-}
-
-const newSetTab = (value, bill, index) => {
-	/*
-	const updatedTab = {
-		...bill.tabs[props.index], 
-		'name': event.target.value 
-	}
-	*/
-	bill.tabs[index][value] = value
-	/*
-	props.setBill({ 
-		...bill,
-		tabs: [{
-			//...updatedTab
-		}]
-	})
-	*/
-}
-
 /**
  * 
  * @param {Object} props 
  *   {
- *		tabs: "the array of tabs which are {item, name, price}" 
+ *		bill: "the bill reactive state object see model.js" 
+		setBill: "a reactive way to update the parent state bill from this child component"
 		index: "the row or index in tabs we are modifying i.e name"
  *   }
  * @returns 
@@ -75,7 +45,7 @@ const TabInputUserInterface = (props) => {
 						...tab,
 						name: event.target.value,
 					})
-					props.setBill({ 
+					props.setBill({
 						...props.bill,
 						tabs: [{
 							...props.bill.tabs,
@@ -86,12 +56,12 @@ const TabInputUserInterface = (props) => {
 			/>
 			<TextInput
 				placeholder="Item i.e pizza"
-				onChange={ (event) => {
+				onChange={(event) => {
 					setTab({
 						...tab,
 						item: event.target.value
 					})
-					props.setBill({ 
+					props.setBill({
 						...props.bill,
 						tabs: [{
 							...props.bill.tabs,
@@ -103,12 +73,12 @@ const TabInputUserInterface = (props) => {
 			<TextInput
 				placeholder="Price 0.00"
 				textAlign='$'
-				onChange={ (event) => {
+				onChange={(event) => {
 					setTab({
 						...tab,
 						price: event.target.value
 					})
-					props.setBill({ 
+					props.setBill({
 						...props.bill,
 						tabs: [{
 							...props.bill.tabs,
@@ -120,23 +90,71 @@ const TabInputUserInterface = (props) => {
 		</Grid>
 	);
 }
+
+const TabTableRow = (props) => {
+	return (
+		<TableRow>
+			<TableCell scope="row">
+				{props.tab.name}
+			</TableCell>
+			<TableCell>{props.tab.item}</TableCell>
+			<TableCell>{props.tab.price}</TableCell>
+		</TableRow>
+	)
+}
+
+const generateTableBody = (bill) => {
+	const tableRowsUserInterface = []
+	for (let i = 0; i < bill.tabs; ++i) {
+		tableRowsUserInterface.push(
+			<TabTableRow tab={bill.tabs[i]}/>	
+		)
+	}
+	return tableRowsUserInterface;
+}
+
+const BillOutput = (props) => {
+	return (
+	<Table>
+		<TableHeader>
+			<TableRow>
+				<TableCell scope="col" border="bottom">
+					Name
+				</TableCell>
+				<TableCell scope="col" border="bottom">
+					Item
+				</TableCell>
+				<TableCell scope="col" border="bottom">
+					Price
+				</TableCell>
+			</TableRow>
+		</TableHeader>
+		<TableBody>
+			{props.showBill}
+		</TableBody>
+	</Table>
+	);
+}
 const BillUserInterface = (props) => {
-	const [bill, setBill] = useState(new Bill(new Row ()));
+	const [bill, setBill] = useState(new Bill(new Row()));
 	const [userInterfaceTabs, setUserInterfaceTabs] = useState([
-		<TabInputUserInterface 
-			index={0} 
+		<TabInputUserInterface
+			index={0}
 			bill={bill}
 			setBill={setBill}
 		/>
 	]);
+	const [showBill, setShowBill] = useState(
+		bill.tabs.map(tab => <TabTableRow tab={tab}/>)
+	)
 	return (
-		<Tab title={ bill.eventName !== '' ? bill.eventName : 'Create Bill' }>
-			<Grid columns='medium' gap='small' pad={{top: 'small'}}>
+		<Tab title={bill.eventName !== '' ? bill.eventName : 'Create Bill'}>
+			<Grid columns='medium' gap='small' pad={{ top: 'small' }}>
 				<Box>
 					<Text>Event</Text>
-						<TextInput 
+					<TextInput
 						placeholder="Event i.e. restaurant, game, bar"
-						onChange={ (event) => {
+						onChange={(event) => {
 							setBill({
 								...bill,
 								eventName: event.target.value
@@ -152,7 +170,7 @@ const BillUserInterface = (props) => {
 				</Box>
 				<Box>
 					<Text>Date</Text>
-					<DateInput 
+					<DateInput
 						format="mm/dd/yyyy"
 						onChange={({ value }) => {
 							setBill({
@@ -162,8 +180,8 @@ const BillUserInterface = (props) => {
 						}}
 					/>
 				</Box>
-			</Grid>  
-			<Grid columns='medium' pad={{top: 'medium'}}>
+			</Grid>
+			<Grid columns='medium' pad={{ top: 'medium' }}>
 				<Box alignContent='center' align='center'>
 					<Text>Event</Text>
 				</Box>
@@ -176,10 +194,10 @@ const BillUserInterface = (props) => {
 			</Grid>
 			{userInterfaceTabs}
 			<Button label='Add row' onClick={() => {
-				bill.tabs.push(new Row()) 
+				bill.tabs.push(new Row())
 				for (let i = 0; i < bill.tabs.length; ++i) {
 					setUserInterfaceTabs([
-						...userInterfaceTabs, 
+						...userInterfaceTabs,
 						<TabInputUserInterface
 							bill={bill}
 							setBill={setBill}
@@ -187,11 +205,27 @@ const BillUserInterface = (props) => {
 						/>
 					])
 				}
-			}}/>
+			}} />
 			<Button label='Print bill' onClick={() => {
+				console.log('\n\n\n')
 				console.log(bill)
-				console.log(bill.tabs[0])
-			}}/>
+				console.log(`Tab length: ${bill.tabs.length}`)
+				bill.tabs.map(bill => console.log(bill))
+				console.log('--------------')
+			}} />
+			<Accordion onActive={ (index) => {
+					console.log(`accordian tab length: ${bill.tabs.length}`)
+					setShowBill(bill.tabs.map(tab => <TabTableRow tab={tab}/>))
+					 /*
+				 	console.log(generateTableBody(bill).length)
+					setShowBill(generateTableBody(bill))
+					*/
+			}}>
+				<AccordionPanel label='Data table' onActive={ (index) => {
+				}}>
+					<BillOutput showBill={showBill}/>
+				</AccordionPanel>
+			</Accordion>
 		</Tab>
 	)
 }
@@ -209,13 +243,13 @@ const App = () => {
 						}
 					/>
 					<Tabs onActive={(index) => { tabIndex = index }}>
-						<BillUserInterface/>
+						<BillUserInterface />
 					</Tabs>
 					<Box>
 						<Button label='Create Event' onClick={() => console.log('Create event')} />
 						<Button label='Submit' onClick={() => {
-							console.log('Submit!!!') 
-						}}/>
+							console.log('Submit!!!')
+						}} />
 					</Box>
 				</PageContent>
 			</Page>
