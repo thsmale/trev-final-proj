@@ -3,8 +3,11 @@ import {
 	Box,
 	Button,
 	DateInput,
+	Form,
+	FormField,
 	Grid,
 	Grommet,
+	Heading,
 	Page,
 	PageContent,
 	PageHeader,
@@ -73,11 +76,15 @@ const BillUserInterface = (props) => {
 			/>
 		);
 	}
-
 	return (
 		<Tab title={ bill.eventName !== '' ? bill.eventName : 'Create Event' }>
-			<Box direction='row' gap='small' pad={{ bottom: 'small' }}>
-				<TextInput
+		<Form
+			onChange={nextValue => console.log(nextValue)}
+			onReset={() => console.log('reset')}
+			onSubmit={({ value }) => {console.log('submittt')}}
+		>
+		<FormField name="Event" htmlFor="text-input-id" label="Name">
+			<TextInput id='text-input-id' name='name'
 					placeholder="Event i.e. restaurant, game, bar"
 					onChange={ (event) => {
 						setBill({
@@ -86,7 +93,9 @@ const BillUserInterface = (props) => {
 						})
 					}}
 				/>
-				<DateInput
+		</FormField>
+		<FormField name="Date" htmlFor="date-input-id" label='Date'>
+				<DateInput id='date-input-id' name='date'
 					format="mm/dd/yyyy"
 					onChange={({ value }) => {
 						setBill({
@@ -95,7 +104,8 @@ const BillUserInterface = (props) => {
 						})
 					}}
 				/>
-			</Box>
+		</FormField>
+		</Form>
 			{tabInputUserInterface}
 			<Button label='Add row' onClick={() => bill.tabs.push(new Row())} />
 		</Tab>
