@@ -1,7 +1,10 @@
-export function Bill() {
+export function Bill(row) {
 	this.eventName = '';
 	this.date = new Date().toISOString();
-	this.tabs = [];
+	if (row === undefined || row === null)
+		this.tabs = [];
+	else
+		this.tabs = [ row ]
 }
 
 export function Row() {
