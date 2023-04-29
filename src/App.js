@@ -103,16 +103,6 @@ const TabTableRow = (props) => {
 	)
 }
 
-const generateTableBody = (bill) => {
-	const tableRowsUserInterface = []
-	for (let i = 0; i < bill.tabs; ++i) {
-		tableRowsUserInterface.push(
-			<TabTableRow tab={bill.tabs[i]}/>	
-		)
-	}
-	return tableRowsUserInterface;
-}
-
 const BillOutput = (props) => {
 	return (
 	<Table>
@@ -147,11 +137,12 @@ const BillUserInterface = (props) => {
 	const [showBill, setShowBill] = useState(
 		bill.tabs.map(tab => <TabTableRow tab={tab}/>)
 	)
+	const [activeAccordionIndex, setActiveAccordionIndex] = useState([])
 	return (
 		<Tab title={bill.eventName !== '' ? bill.eventName : 'Create Bill'}>
 			<Grid columns='medium' gap='small' pad={{ top: 'small' }}>
 				<Box>
-					<Text>Event</Text>
+					<Text>Item</Text>
 					<TextInput
 						placeholder="Event i.e. restaurant, game, bar"
 						onChange={(event) => {
@@ -207,22 +198,27 @@ const BillUserInterface = (props) => {
 				}
 			}} />
 			<Button label='Print bill' onClick={() => {
-				console.log('\n\n\n')
+				console.log('PRINT BILL\n\n\n')
 				console.log(bill)
 				console.log(`Tab length: ${bill.tabs.length}`)
 				bill.tabs.map(bill => console.log(bill))
 				console.log('--------------')
 			}} />
 			<Accordion onActive={ (index) => {
-					console.log(`accordian tab length: ${bill.tabs.length}`)
+				 	console.log(`Active accordion index ${index}`)
+					console.log(`accordian index length: ${index.length}`)
+					if (index.length === 0) {
+						setActiveAccordionIndex([])
+						return
+					}
+					console.log(`ahhh ${index.length}`)
+					setActiveAccordionIndex([])
+					console.log(bill.tabs[0])
 					setShowBill(bill.tabs.map(tab => <TabTableRow tab={tab}/>))
-					 /*
-				 	console.log(generateTableBody(bill).length)
-					setShowBill(generateTableBody(bill))
-					*/
-			}}>
-				<AccordionPanel label='Data table' onActive={ (index) => {
-				}}>
+					setActiveAccordionIndex([0])
+					//setActiveAccordionIndex(!activeAccordionIndex)
+			}} activeIndex={activeAccordionIndex}>
+				<AccordionPanel label='Data table'>
 					<BillOutput showBill={showBill}/>
 				</AccordionPanel>
 			</Accordion>

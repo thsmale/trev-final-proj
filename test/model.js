@@ -4,7 +4,7 @@ function Bill(row) {
 	if (row === undefined || row === null) {
 		this.tabs = [];
 	} else {
-		this.tabs = [row]
+		this.tabs = [ this.tabrow]
 	}
 }
 
