@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import {
 	Box,
 	Button,
@@ -7,13 +7,11 @@ import {
 	FormField,
 	Grid,
 	Grommet,
-	Heading,
 	Page,
 	PageContent,
 	PageHeader,
 	Tabs,
 	Tab,
-	Text,
 	TextInput
 } from 'grommet';
 import { hpe } from 'grommet-theme-hpe';
@@ -31,7 +29,7 @@ const setTab = (name, tabs, index) => {
 	);
 }
 
-const tabInputUserInterface = (props) => {
+const TabInputUserInterface = (props) => {
 	return (
 		<Grid columns="medium" gap="small" pad={{ bottom: "small" }}>
 			<TextInput
@@ -60,21 +58,28 @@ const tabInputUserInterface = (props) => {
 					console.log(event)
 				}}
 			/>
-
 		</Grid>
 	);
 }
 const BillUserInterface = (props) => {
-	const [bill, setBill] = React.useState(new Bill());
-	const userInterfaceTabs = [];
+	const [bill, setBill] = useState(new Bill());
+	const [userInterfaceTabs, setUserInterfaceTabs] = useState([]);
+	bill.tabs.map(bill => {
+		console.log(bill)
+	})
 	for (let i = 0; i < bill.tabs.length; ++i) {
-		userInterfaceTabs.push(
-			<tabInputUserInterface
+		const rows = [];
+		rows.push(
+			<TabInputUserInterface
+			 /*
 				index={i} 
 				tabs={bill.tabs} 
+				*/
 				// TODO: Pass some kind of state in here 
 			/>
 		);
+		console.log('hi')
+		setUserInterfaceTabs(rows)
 	}
 	return (
 		<Tab title={ bill.eventName !== '' ? bill.eventName : 'Create Event' }>
@@ -105,15 +110,20 @@ const BillUserInterface = (props) => {
 					}}
 				/>
 		</FormField>
+		<FormField name='Tabs' htmlFor='tab-input' label='Tabs'>
+			<Box pad={{ top: 'small' }}>
+				<TabInputUserInterface pad={{ top: 'small' }}/>
+
+			</Box>
+		</FormField>
 		</Form>
-			{tabInputUserInterface}
 			<Button label='Add row' onClick={() => bill.tabs.push(new Row())} />
-		</Tab>
+					</Tab>
 	)
 }
 
 const App = () => {
-	const tabIndex = 0;
+	let tabIndex = 0;
 	return (
 		<Grommet theme={hpe}>
 			<Page>
