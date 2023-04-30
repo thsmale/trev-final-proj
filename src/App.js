@@ -39,7 +39,7 @@ const TabInputUserInterface = (props) => {
 	return (
 		<Grid columns="medium" gap="small" pad={{ bottom: "small" }}>
 			<TextInput
-				placeholder="Name i.e trevor"
+				placeholder="arthur"
 				onChange={(event) => {
 					setTab({
 						...tab,
@@ -55,8 +55,9 @@ const TabInputUserInterface = (props) => {
 				}}
 			/>
 			<TextInput
-				placeholder="Item i.e pizza"
+				placeholder="pizza"
 				onChange={(event) => {
+					console.log(event.target.value)
 					setTab({
 						...tab,
 						item: event.target.value
@@ -71,8 +72,7 @@ const TabInputUserInterface = (props) => {
 				}}
 			/>
 			<TextInput
-				placeholder="Price 0.00"
-				textAlign='$'
+				placeholder="0.00"
 				onChange={(event) => {
 					setTab({
 						...tab,
@@ -94,13 +94,27 @@ const TabInputUserInterface = (props) => {
 const TabTableRow = (props) => {
 	return (
 		<TableRow>
-			<TableCell scope="row">
-				{props.tab.name}
-			</TableCell>
+			<TableCell scope="row">{props.tab.name}</TableCell>
 			<TableCell>{props.tab.item}</TableCell>
 			<TableCell>{props.tab.price}</TableCell>
 		</TableRow>
 	)
+}
+
+const LabelDataTable = (props) => {
+	return (
+		<Grid columns='medium' pad={{ top: 'medium' }}>
+			<Box alignContent='center' align='center'>
+				<Text>Name</Text>
+			</Box>
+			<Box align='center'>
+				<Text>Item</Text>
+			</Box>
+			<Box align='center'>
+				<Text>Price</Text>
+			</Box>
+		</Grid>
+	);
 }
 
 const BillOutput = (props) => {
@@ -125,13 +139,16 @@ const BillOutput = (props) => {
 	</Table>
 	);
 }
+
 const BillUserInterface = (props) => {
 	const [bill, setBill] = useState(new Bill(new Row()));
+	const [tabs, setTabs] = useState([new Row()])
 	const [userInterfaceTabs, setUserInterfaceTabs] = useState([
 		<TabInputUserInterface
 			index={0}
 			bill={bill}
 			setBill={setBill}
+			key={bill.tabs[0].id}
 		/>
 	]);
 	const [showBill, setShowBill] = useState(
@@ -142,7 +159,7 @@ const BillUserInterface = (props) => {
 		<Tab title={bill.eventName !== '' ? bill.eventName : 'Create Bill'}>
 			<Grid columns='medium' gap='small' pad={{ top: 'small' }}>
 				<Box>
-					<Text>Item</Text>
+					<Text>Event</Text>
 					<TextInput
 						placeholder="Event i.e. restaurant, game, bar"
 						onChange={(event) => {
@@ -157,6 +174,12 @@ const BillUserInterface = (props) => {
 					<Text>Owner name</Text>
 					<TextInput
 						placeholder='Owner i.e Trevor'
+						onChange={(event) => {
+							setBill({
+								...bill,
+								owner: event.target.value
+							})
+						}}
 					/>
 				</Box>
 				<Box>
@@ -172,17 +195,7 @@ const BillUserInterface = (props) => {
 					/>
 				</Box>
 			</Grid>
-			<Grid columns='medium' pad={{ top: 'medium' }}>
-				<Box alignContent='center' align='center'>
-					<Text>Event</Text>
-				</Box>
-				<Box align='center'>
-					<Text>Item</Text>
-				</Box>
-				<Box align='center'>
-					<Text>Price</Text>
-				</Box>
-			</Grid>
+			<LabelDataTable/>
 			{userInterfaceTabs}
 			<Button label='Add row' onClick={() => {
 				bill.tabs.push(new Row())
@@ -193,6 +206,7 @@ const BillUserInterface = (props) => {
 							bill={bill}
 							setBill={setBill}
 							index={i}
+							key={bill.tabs[0].id}
 						/>
 					])
 				}
@@ -204,14 +218,13 @@ const BillUserInterface = (props) => {
 				bill.tabs.map(bill => console.log(bill))
 				console.log('--------------')
 			}} />
-			<Accordion onActive={ (index) => {
+			<Accordion pad={{top: 'large' }} onActive={ (index) => {
 				 	console.log(`Active accordion index ${index}`)
 					console.log(`accordian index length: ${index.length}`)
 					if (index.length === 0) {
 						setActiveAccordionIndex([])
 						return
 					}
-					console.log(`ahhh ${index.length}`)
 					setActiveAccordionIndex([])
 					console.log(bill.tabs[0])
 					setShowBill(bill.tabs.map(tab => <TabTableRow tab={tab}/>))
@@ -241,11 +254,12 @@ const App = () => {
 					<Tabs onActive={(index) => { tabIndex = index }}>
 						<BillUserInterface />
 					</Tabs>
-					<Box>
+					<Box pad={{top: 'large'}}>
 						<Button label='Create Event' onClick={() => console.log('Create event')} />
 						<Button label='Submit' onClick={() => {
 							console.log('Submit!!!')
-						}} />
+						}} 
+					/>
 					</Box>
 				</PageContent>
 			</Page>
