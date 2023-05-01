@@ -183,6 +183,7 @@ const ShowBill = ({ bill }) => {
 const TabUserInterface = (props) => {
 	const [tabs, setTabs] = useState([new Row()]);
 	const handleTab = (property, value, id) => {
+		console.log(tabs.length)
 		const updatedTabs = tabs.map(tab => {
 			if (tab.id === id)
 				tab[property] = value
@@ -190,17 +191,27 @@ const TabUserInterface = (props) => {
 		})
 		setTabs(updatedTabs)
 	}
+	//const [handleTab] = useState(updateTab)
 	const [userInterfaceTabs, setUserInterfaceTabs] = useState([
 		<TabInputUserInterface
 			key={tabs[0].id}
 			handleTab={handleTab}
-			id={tabs[0].id} //Note not the way to mark this
+			id={tabs[0].id} 
 		/>
 	]);
 	return (
 		<Grid>
 			<LabelDataTable />
-			{userInterfaceTabs}
+			{/*userInterfaceTabs*/}
+			{
+				tabs.map(tab => (
+					<TabInputUserInterface
+						key={tab.id}
+						id={tab.id}
+						handleTab={handleTab}
+					/>
+				))
+			}
 			<Button
 				label='Add row'
 				onClick={() => {
@@ -209,6 +220,7 @@ const TabUserInterface = (props) => {
 						...tabs,
 						tab
 					])
+					/*
 					setUserInterfaceTabs([
 						...userInterfaceTabs,
 						<TabInputUserInterface
@@ -217,6 +229,7 @@ const TabUserInterface = (props) => {
 							handleTab={handleTab}
 						/>
 					])
+					*/
 				}}
 			/>
 			<PrintTabs tabs={tabs} />
