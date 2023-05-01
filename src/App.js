@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import {
-	Accordion,
-	AccordionPanel,
 	Box,
 	Button,
 	DateInput,
@@ -12,26 +10,100 @@ import {
 	PageHeader,
 	Tabs,
 	Tab,
-	Table,
-	TableBody,
-	TableCell,
-	TableHeader,
-	TableRow,
 	Text,
 	TextInput,
 } from 'grommet';
 import { hpe } from 'grommet-theme-hpe';
+import { Add } from 'grommet-icons';
 import { subtitle } from './data.js';
 import { Bill, Row } from './model.js';
+import { PrintBill } from './debug.js';
+
+
+/**
+ * The eventName is used to identify an event such as going to Rileys bar 
+ * @param {Object} props 
+ * 		updateBill will lift the state up and set the bill object
+ * @returns Text input which is one of three columns in a row  
+ */
+const EventNameUserInterface = ({ updateBill }) => {
+	return (
+		<Box>
+			<Text>Event</Text>
+			<TextInput
+				placeholder="Event i.e. restaurant, game, bar"
+				onChange={(event) => {
+					updateBill('eventName', event.target.value)
+				}}
+			/>
+		</Box>
+	)
+}
+
+/**
+ * 
+ * The owner is who paid the bill
+ * @param {Object} props 
+ * 		updateBill sets the state of stateful object Bill
+ * @returns Text input to type in the owner name
+ */
+const BillOwnerUserInterface = ({ updateBill }) => {
+	return (
+		<Box>
+			<Text>Owner name</Text>
+			<TextInput
+				placeholder='Owner i.e Trevor'
+				onChange={(event) => {
+					updateBill('owner', event.target.value)
+				}}
+			/>
+		</Box>
+	)
+}
+
+/**
+ * Date is an optional field to record the day of the event 
+ * TODO: Add time as option
+ * @param {Object} props 
+ * 		updateBill lifts the state up and sets the stateful Bill object
+ * @returns A calander to select the date or formatted input
+ */
+const DateUserInterface = ({ updateBill }) => {
+	return (
+		<Box>
+			<Text>Date</Text>
+			<DateInput
+				format="mm/dd/yyyy"
+				onChange={({ value }) => {
+					updateBill('date', value)
+				}}
+			/>
+		</Box>
+	)
+}
+
+const LabelDataTable = (props) => {
+	return (
+		<Grid columns='medium' pad={{ top: 'medium' }} gap='small'>
+			<Box>
+				<Text>Name</Text>
+			</Box>
+			<Box>
+				<Text>Item</Text>
+			</Box>
+			<Box>
+				<Text>Price</Text>
+			</Box>
+		</Grid>
+	);
+}
 
 /**
  * 
  * @param {Object} props 
- *   {
  * 		handleTab a function that iterates over the tabs and mutates the respective tab
  * 		id how handleTab identifies which tab to modify
- *   }
- * @returns 
+ * @returns 3 columns that accept input for the Row object
  */
 const TabInputUserInterface = ({ handleTab, id }) => {
 	return (
@@ -58,132 +130,15 @@ const TabInputUserInterface = ({ handleTab, id }) => {
 	);
 }
 
-const TabTableRow = (props) => {
-	return (
-		<TableRow>
-			<TableCell scope="row">{props.tab.name}</TableCell>
-			<TableCell>{props.tab.item}</TableCell>
-			<TableCell>{props.tab.price}</TableCell>
-		</TableRow>
-	)
-}
-
-const LabelDataTable = (props) => {
-	return (
-		<Grid columns='medium' pad={{ top: 'medium' }}>
-			<Box alignContent='center' align='center'>
-				<Text>Name</Text>
-			</Box>
-			<Box align='center'>
-				<Text>Item</Text>
-			</Box>
-			<Box align='center'>
-				<Text>Price</Text>
-			</Box>
-		</Grid>
-	);
-}
-
-const BillOutput = (props) => {
-	return (
-		<Table>
-			<TableHeader>
-				<TableRow>
-					<TableCell scope="col" border="bottom">
-						Name
-					</TableCell>
-					<TableCell scope="col" border="bottom">
-						Item
-					</TableCell>
-					<TableCell scope="col" border="bottom">
-						Price
-					</TableCell>
-				</TableRow>
-			</TableHeader>
-			<TableBody>
-				{props.showBill}
-			</TableBody>
-		</Table>
-	);
-}
-
-const AddRow = ({ bill, setBill, userInterfaceTabs, setUserInterfaceTabs }) => {
-	/*
-		  <Button label='Add row' onClick={() => {
-			  bill.tabs.push(new Row())
-			  for (let i = 0; i < bill.tabs.length; ++i) {
-				  setUserInterfaceTabs([
-					  ...userInterfaceTabs,
-					  <TabInputUserInterface
-						  bill={bill}
-						  setBill={setBill}
-						  index={i}
-						  key={bill.tabs[0].id}
-					  />
-				  ])
-			  }
-		  }} />
-		  */
-}
-
-const PrintBill = ({ bill }) => {
-	return (
-		<Button
-			label='Print bill'
-			onClick={() => {
-				console.log('PRINT BILL\n\n\n')
-				console.log(bill)
-				console.log(`Tab length: ${bill.tabs.length}`)
-				bill.tabs.map(bill => console.log(bill))
-				console.log('--------------')
-			}}
-		/>
-	)
-}
-
-const PrintTabs = ({ tabs }) => {
-	return (
-		<Button
-			label='Print Tabs'
-			onClick={() => {
-				console.log('PRINT tabs\n\n\n')
-				console.log(`Tab length: ${tabs.length}`)
-				tabs.map(tab => console.log(tab))
-				console.log('--------------')
-			}}
-		/>
-	)
-}
-
-const ShowBill = ({ bill }) => {
-	const [showBill, setShowBill] = useState(
-		bill.tabs.map(tab => <TabTableRow tab={tab} />)
-	)
-	const [activeAccordionIndex, setActiveAccordionIndex] = useState([])
-	return (
-		<Accordion pad={{ top: 'large' }} onActive={(index) => {
-			console.log(`Active accordion index ${index}`)
-			console.log(`accordian index length: ${index.length}`)
-			if (index.length === 0) {
-				setActiveAccordionIndex([])
-				return
-			}
-			setActiveAccordionIndex([])
-			console.log(bill.tabs[0])
-			setShowBill(bill.tabs.map(tab => <TabTableRow tab={tab} />))
-			setActiveAccordionIndex([0])
-		}} activeIndex={activeAccordionIndex}>
-			<AccordionPanel label='Data table'>
-				<BillOutput showBill={showBill} />
-			</AccordionPanel>
-		</Accordion>
-	)
-}
-
-const TabUserInterface = (props) => {
-	const [tabs, setTabs] = useState([new Row()]);
+/**
+ * 
+ * @param {Object} props 
+ * 		tabs a stateful array of object type Rows  
+ * 		setTabs sets the state of the tabs array
+ * @returns A 3 by X matrix where users can control number of rows X
+ */
+const TabUserInterface = ({ tabs, setTabs }) => {
 	const handleTab = (property, value, id) => {
-		console.log(tabs.length)
 		const updatedTabs = tabs.map(tab => {
 			if (tab.id === id)
 				tab[property] = value
@@ -191,18 +146,9 @@ const TabUserInterface = (props) => {
 		})
 		setTabs(updatedTabs)
 	}
-	//const [handleTab] = useState(updateTab)
-	const [userInterfaceTabs, setUserInterfaceTabs] = useState([
-		<TabInputUserInterface
-			key={tabs[0].id}
-			handleTab={handleTab}
-			id={tabs[0].id} 
-		/>
-	]);
 	return (
 		<Grid>
 			<LabelDataTable />
-			{/*userInterfaceTabs*/}
 			{
 				tabs.map(tab => (
 					<TabInputUserInterface
@@ -220,75 +166,49 @@ const TabUserInterface = (props) => {
 						...tabs,
 						tab
 					])
-					/*
-					setUserInterfaceTabs([
-						...userInterfaceTabs,
-						<TabInputUserInterface
-							key={tab.id}
-							id={tab.id}
-							handleTab={handleTab}
-						/>
-					])
-					*/
 				}}
 			/>
-			<PrintTabs tabs={tabs} />
 		</Grid>
 	)
 }
 
+/**
+ * TODO: Add description input and add required fields
+ * @param {*} props 
+ * @returns 
+ */
 const BillUserInterface = (props) => {
-	const [bill, setBill] = useState(new Bill(new Row()));
+	const [bill, setBill] = useState(new Bill());
+	const [tabs, setTabs] = useState([new Row()]);
+	const updateBill = (property, value) => {
+		setBill({
+			...bill,
+			[property]: value
+		})
+	}
 
 	return (
 		//<Tab title={bill.eventName !== '' ? bill.eventName : 'Create Bill'}>
 		<Grid>
 			<Grid columns='medium' gap='small' pad={{ top: 'small' }}>
-				<Box>
-					<Text>Event</Text>
-					<TextInput
-						placeholder="Event i.e. restaurant, game, bar"
-						onChange={(event) => {
-							setBill({
-								...bill,
-								eventName: event.target.value
-							})
-						}}
-					/>
-				</Box>
-				<Box>
-					<Text>Owner name</Text>
-					<TextInput
-						placeholder='Owner i.e Trevor'
-						onChange={(event) => {
-							setBill({
-								...bill,
-								owner: event.target.value
-							})
-						}}
-					/>
-				</Box>
-				<Box>
-					<Text>Date</Text>
-					<DateInput
-						format="mm/dd/yyyy"
-						onChange={({ value }) => {
-							setBill({
-								...bill,
-								date: value,
-							})
-						}}
-					/>
-				</Box>
+				<EventNameUserInterface updateBill={updateBill}/>
+				<BillOwnerUserInterface updateBill={updateBill}/>
+				<DateUserInterface updateBill={updateBill}/>
 			</Grid>
-			<TabUserInterface/>
-			<PrintBill bill={bill} />
-			<ShowBill bill={bill} />
+				<TabUserInterface tabs={tabs} setTabs={setTabs} />
+				<PrintBill bill={bill}/>
 		</Grid>
 	)
 }
 
 const App = () => {
+	const [bills, setBills] = useState([new Bill()])
+	const updateBills = (property, value, id) => {
+		const update = bills.tab.map(bill => {
+
+		})
+		setBills(update)
+	}
 	let tabIndex = 0;
 	return (
 		<Grommet theme={hpe} full themeMode='dark'>
@@ -300,15 +220,24 @@ const App = () => {
 							<Box>{subtitle}</Box>
 						}
 					/>
-					<Tabs onActive={(index) => { tabIndex = index }}>
-						<Tab>
+					<Tabs
+						onActive={(index) => {
+							console.log(index)
+							if (index === bills.length) {
+								console.log("New Event!")
+							}
+							tabIndex = index
+						}}
+					>
+						<Tab title='Bill name'>
 							<BillUserInterface />
+						</Tab>
+						<Tab icon={<Add />}>
 
 						</Tab>
 					</Tabs>
 					<Box pad={{ top: 'large' }}>
-						<Button label='Create Event' onClick={() => console.log('Create event')} />
-						<Button label='Submit' onClick={() => {
+						<Button primary label='Submit' onClick={() => {
 							console.log('Submit!!!')
 						}}
 						/>

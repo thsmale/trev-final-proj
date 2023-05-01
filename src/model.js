@@ -4,7 +4,7 @@ export function Bill(tab) {
 	this.id = uuidv4();
 	this.eventName = '';
 	this.owner = '';
-	this.date = new Date().toISOString();
+	this.date = '';
 	if (tab === undefined || tab === null)
 		this.tabs = [];
 	else
