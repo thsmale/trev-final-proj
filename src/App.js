@@ -28,31 +28,30 @@ import { Bill, Row } from './model.js';
  * 
  * @param {Object} props 
  *   {
- *		bill: "the bill reactive state object see model.js" 
-		setBill: "a reactive way to update the parent state bill from this child component"
-		index: "the row or index in tabs we are modifying i.e name"
+ * 		handleTab a function that iterates over the tabs and mutates the respective tab
+ * 		id how handleTab identifies which tab to modify
  *   }
  * @returns 
  */
-const TabInputUserInterface = (props) => {
+const TabInputUserInterface = ({ handleTab, id }) => {
 	return (
 		<Grid columns="medium" gap="small" pad={{ bottom: "small" }}>
 			<TextInput
 				placeholder="arthur"
 				onChange={(event) => {
-					props.handleTab('name', event.target.value, props.id)	
+					handleTab('name', event.target.value, id)
 				}}
 			/>
 			<TextInput
 				placeholder="pizza"
 				onChange={(event) => {
-					props.handleTab('item', event.target.value, props.id)	
+					handleTab('item', event.target.value, id)
 				}}
 			/>
 			<TextInput
 				placeholder="0.00"
 				onChange={(event) => {
-					props.handleTab('price', event.target.value, props.id)	
+					handleTab('price', event.target.value, id)
 				}}
 			/>
 		</Grid>
@@ -108,7 +107,7 @@ const BillOutput = (props) => {
 	);
 }
 
-const AddRow = () => {
+const AddRow = ({ bill, setBill, userInterfaceTabs, setUserInterfaceTabs }) => {
 	/*
 		  <Button label='Add row' onClick={() => {
 			  bill.tabs.push(new Row())
@@ -181,35 +180,52 @@ const ShowBill = ({ bill }) => {
 	)
 }
 
-const BillUserInterface = (props) => {
-	const [bill, setBill] = useState(new Bill(new Row()));
-	const [tabs, setTabs] = useState([new Row()])
-
-
+const TabUserInterface = (props) => {
+	const [tabs, setTabs] = useState([new Row()]);
 	const handleTab = (property, value, id) => {
-		const updatedTabs = bill.tabs.map(tab => {
+		const updatedTabs = tabs.map(tab => {
 			if (tab.id === id)
 				tab[property] = value
 			return tab
 		})
-		setBill({
-			...bill,
-			tabs: updatedTabs
-		})
+		setTabs(updatedTabs)
 	}
-
 	const [userInterfaceTabs, setUserInterfaceTabs] = useState([
 		<TabInputUserInterface
-			index={0}
-			bill={bill}
-			setBill={setBill}
-			key={bill.tabs[0].id}
-			tab={tabs}
-			setTabs={setTabs}
+			key={tabs[0].id}
 			handleTab={handleTab}
-			id={bill.tabs[0].id} //Note not the way to mark this
+			id={tabs[0].id} //Note not the way to mark this
 		/>
 	]);
+	return (
+		<Grid>
+			<LabelDataTable />
+			{userInterfaceTabs}
+			<Button
+				label='Add row'
+				onClick={() => {
+					const tab = new Row();
+					setTabs([
+						...tabs,
+						tab
+					])
+					setUserInterfaceTabs([
+						...userInterfaceTabs,
+						<TabInputUserInterface
+							key={tab.id}
+							id={tab.id}
+							handleTab={handleTab}
+						/>
+					])
+				}}
+			/>
+			<PrintTabs tabs={tabs} />
+		</Grid>
+	)
+}
+
+const BillUserInterface = (props) => {
+	const [bill, setBill] = useState(new Bill(new Row()));
 
 	return (
 		//<Tab title={bill.eventName !== '' ? bill.eventName : 'Create Bill'}>
@@ -252,10 +268,8 @@ const BillUserInterface = (props) => {
 					/>
 				</Box>
 			</Grid>
-			<LabelDataTable />
-			{userInterfaceTabs}
+			<TabUserInterface/>
 			<PrintBill bill={bill} />
-			<PrintTabs tabs={tabs} />
 			<ShowBill bill={bill} />
 		</Grid>
 	)
