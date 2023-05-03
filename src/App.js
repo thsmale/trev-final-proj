@@ -137,16 +137,6 @@ const TabInputUserInterface = ({ updateTabs, id }) => {
  * @returns A 3 by X matrix where users can control number of rows X
  */
 const TabUserInterface = ({ tabs, updateTabs, addTab }) => {
-	/*
-	const handleTab = (property, value, id) => {
-		const updatedTabs = tabs.map(tab => {
-			if (tab.id === id)
-				tab[property] = value
-			return tab
-		})
-		setTabs(updatedTabs)
-	}
-	*/
 	return (
 		<Grid>
 			<LabelDataTable />
@@ -173,8 +163,8 @@ const TabUserInterface = ({ tabs, updateTabs, addTab }) => {
  * @returns 
  */
 const BillUserInterface = (props) => {
-	const [bill, setBill] = useState(new Bill());
-	const [tabs, setTabs] = useState([new Row()]);
+	const [bill, setBill] = useState(new Bill(new Row()));
+	//const [tabs, setTabs] = useState([new Row()]);
 	const updateBill = (property, value) => {
 		setBill({
 			...bill,
@@ -182,13 +172,19 @@ const BillUserInterface = (props) => {
 		})
 	}
 	const updateTabs = (property, value, id) => {
-		setTabs(tabs.map(tab => {
-			if (tab.id === id)
-				tab[property] = value
-			return tab
-		}))
+		setBill({
+			...bill,
+			tabs: bill.tabs.map(tab => {
+				if (tab.id === id)
+					tab[property] = value
+				return tab
+			})
+		})
 	}
-	const addTab = () => setTabs([...tabs, new Row()])
+	const addTab = () => setBill({
+		...bill,
+		tabs: [...bill.tabs, new Row()]
+	})
 
 	return (
 		//<Tab title={bill.eventName !== '' ? bill.eventName : 'Create Bill'}>
@@ -199,11 +195,11 @@ const BillUserInterface = (props) => {
 				<DateUserInterface updateBill={updateBill} />
 			</Grid>
 			<TabUserInterface
-				tabs={tabs}
+				tabs={bill.tabs}
 				updateTabs={updateTabs}
 				addTab={addTab}
 			/>
-			<PrintTabs tabs={tabs} />
+			<PrintTabs tabs={bill.tabs} />
 			<PrintBill bill={bill} />
 		</Grid>
 	)
