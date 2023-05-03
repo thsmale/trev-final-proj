@@ -183,21 +183,22 @@ const TabUserInterface = ({ tabs, updateBill, addTab }) => {
  * @param {*} props 
  * @returns 
  */
-const BillUserInterface = (props) => {
-	const [bill, setBill] = useState(new Bill(new Row()));
-	const updateBillMetaData = (property, value) => setBill({
+const BillUserInterface = ({ bill, updateBills }) => {
+	const updateBillMetaData = (property, value) => updateBills({
 		...bill,
 		[property]: value
 	})
-	const updateTabs = (property, value, id) => setBill({
-		...bill,
-		tabs: bill.tabs.map(tab => {
-			if (tab.id === id)
-				tab[property] = value
-			return tab
+	const updateTabs = (property, value, id) => {
+		updateBills({
+			...bill,
+			tabs: bill.tabs.map(tab => {
+				if (tab.id === id)
+					tab[property] = value
+				return tab
+			})
 		})
-	})
-	const addTab = () => setBill({
+	}
+	const addTab = () => updateBills({
 		...bill,
 		tabs: [...bill.tabs, new Row()]
 	})
@@ -224,10 +225,12 @@ const BillUserInterface = (props) => {
 }
 
 const BillsUserInterface = () => {
-	const [bills, setBills] = useState([new Bill()])
-	const updateBills = (property, value, id) => {
-		const update = bills.tab.map(bill => {
-
+	const [bills, setBills] = useState([new Bill(new Row())])
+	const updateBill = (newBill) => {
+		const update = bills.map(bill => {
+			if (bill.id === newBill.id) 
+				return newBill
+			return bill
 		})
 		setBills(update)
 	}
@@ -241,7 +244,7 @@ const BillsUserInterface = () => {
 					// Do not open this tab as plus tab has no body
 					// Should maybe open newly created tab
 					setActiveIndex(activeIndex)
-					setBills([ ...bills, new Bill() ])
+					setBills([ ...bills, new Bill(new Row()) ])
 				} else {
 					setActiveIndex(index)
 				}
@@ -250,7 +253,11 @@ const BillsUserInterface = () => {
 		{
 			bills.map(bill => (
 				<Tab key={bill.id} title={bill.eventName === '' ? 'Create Event' : bill.eventName}>
-					<BillUserInterface key={bill.id}/>
+					<BillUserInterface 
+						key={bill.id}
+						bill={bill}
+						updateBills={updateBill}
+					/>
 				</Tab>
 			))
 		}	
