@@ -17,8 +17,7 @@ import { hpe } from 'grommet-theme-hpe';
 import { Add } from 'grommet-icons';
 import { subtitle } from './data.js';
 import { Bill, Row } from './model.js';
-import { PrintBill } from './debug.js';
-
+import { PrintBill, PrintTabs } from './debug.js';
 
 /**
  * The eventName is used to identify an event such as going to Rileys bar 
@@ -101,29 +100,29 @@ const LabelDataTable = (props) => {
 /**
  * 
  * @param {Object} props 
- * 		handleTab a function that iterates over the tabs and mutates the respective tab
+ * 		updateTabs a function that iterates over the tabs and mutates the respective tab
  * 		id how handleTab identifies which tab to modify
  * @returns 3 columns that accept input for the Row object
  */
-const TabInputUserInterface = ({ handleTab, id }) => {
+const TabInputUserInterface = ({ updateTabs, id }) => {
 	return (
 		<Grid columns="medium" gap="small" pad={{ bottom: "small" }}>
 			<TextInput
 				placeholder="arthur"
 				onChange={(event) => {
-					handleTab('name', event.target.value, id)
+					updateTabs('name', event.target.value, id)
 				}}
 			/>
 			<TextInput
 				placeholder="pizza"
 				onChange={(event) => {
-					handleTab('item', event.target.value, id)
+					updateTabs('item', event.target.value, id)
 				}}
 			/>
 			<TextInput
 				placeholder="0.00"
 				onChange={(event) => {
-					handleTab('price', event.target.value, id)
+					updateTabs('price', event.target.value, id)
 				}}
 			/>
 		</Grid>
@@ -137,7 +136,8 @@ const TabInputUserInterface = ({ handleTab, id }) => {
  * 		setTabs sets the state of the tabs array
  * @returns A 3 by X matrix where users can control number of rows X
  */
-const TabUserInterface = ({ tabs, setTabs }) => {
+const TabUserInterface = ({ tabs, updateTabs, addTab }) => {
+	/*
 	const handleTab = (property, value, id) => {
 		const updatedTabs = tabs.map(tab => {
 			if (tab.id === id)
@@ -146,6 +146,7 @@ const TabUserInterface = ({ tabs, setTabs }) => {
 		})
 		setTabs(updatedTabs)
 	}
+	*/
 	return (
 		<Grid>
 			<LabelDataTable />
@@ -154,26 +155,20 @@ const TabUserInterface = ({ tabs, setTabs }) => {
 					<TabInputUserInterface
 						key={tab.id}
 						id={tab.id}
-						handleTab={handleTab}
+						updateTabs={updateTabs}
 					/>
 				))
 			}
 			<Button
 				label='Add row'
-				onClick={() => {
-					const tab = new Row();
-					setTabs([
-						...tabs,
-						tab
-					])
-				}}
+				onClick={() => addTab()}
 			/>
 		</Grid>
 	)
 }
 
 /**
- * TODO: Add description input and add required fields
+ * TODO: Add description input and add mark required fields w/ red *
  * @param {*} props 
  * @returns 
  */
@@ -186,17 +181,30 @@ const BillUserInterface = (props) => {
 			[property]: value
 		})
 	}
+	const updateTabs = (property, value, id) => {
+		setTabs(tabs.map(tab => {
+			if (tab.id === id)
+				tab[property] = value
+			return tab
+		}))
+	}
+	const addTab = () => setTabs([...tabs, new Row()])
 
 	return (
 		//<Tab title={bill.eventName !== '' ? bill.eventName : 'Create Bill'}>
 		<Grid>
 			<Grid columns='medium' gap='small' pad={{ top: 'small' }}>
-				<EventNameUserInterface updateBill={updateBill}/>
-				<BillOwnerUserInterface updateBill={updateBill}/>
-				<DateUserInterface updateBill={updateBill}/>
+				<EventNameUserInterface updateBill={updateBill} />
+				<BillOwnerUserInterface updateBill={updateBill} />
+				<DateUserInterface updateBill={updateBill} />
 			</Grid>
-				<TabUserInterface tabs={tabs} setTabs={setTabs} />
-				<PrintBill bill={bill}/>
+			<TabUserInterface
+				tabs={tabs}
+				updateTabs={updateTabs}
+				addTab={addTab}
+			/>
+			<PrintTabs tabs={tabs} />
+			<PrintBill bill={bill} />
 		</Grid>
 	)
 }
@@ -209,7 +217,7 @@ const App = () => {
 		})
 		setBills(update)
 	}
-	let tabIndex = 0;
+	const [activeIndex, setActiveIndex] = useState(0);
 	return (
 		<Grommet theme={hpe} full themeMode='dark'>
 			<Page>
@@ -221,12 +229,15 @@ const App = () => {
 						}
 					/>
 					<Tabs
+						activeIndex={activeIndex}
 						onActive={(index) => {
 							console.log(index)
 							if (index === bills.length) {
+								// Create new tab
+								// Do not open this tab
+								setActiveIndex(activeIndex)
 								console.log("New Event!")
 							}
-							tabIndex = index
 						}}
 					>
 						<Tab title='Bill name'>
