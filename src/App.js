@@ -52,7 +52,7 @@ const BillOwnerUserInterface = ({ updateBill }) => {
 		<Box>
 			<Text>Owner name</Text>
 			<TextInput
-				placeholder='Owner i.e Trevor'
+				placeholder='Owner i.e Trevor paid this bill'
 				onChange={(event) => {
 					updateBill('owner', event.target.value)
 				}}
@@ -64,6 +64,7 @@ const BillOwnerUserInterface = ({ updateBill }) => {
 /**
  * Date is an optional field to record the day of the event 
  * TODO: Add time as option
+ * Provide feedback if date invalid i.e they type 12
  * @param {Object} props 
  * 		updateBill lifts the state up and sets the stateful Bill object
  * @returns A calander to select the date or formatted input
@@ -75,7 +76,8 @@ const DateUserInterface = ({ updateBill }) => {
 			<DateInput
 				format="mm/dd/yyyy"
 				onChange={({ value }) => {
-					updateBill('date', value)
+					// If input not typed correctly value will be undefined
+					updateBill('date', value || '')
 				}}
 			/>
 		</Box>
@@ -208,7 +210,7 @@ const BillUserInterface = (props) => {
 				<BillOwnerUserInterface updateBill={updateBillMetaData} />
 				<DateUserInterface updateBill={updateBillMetaData} />
 			</Grid>
-			<Box pad={{top: 'small'}}>
+			<Box pad={{ top: 'small' }}>
 				<DescriptionUserInterface updateBill={updateBillMetaData} />
 			</Box>
 			<TabUserInterface
@@ -221,7 +223,24 @@ const BillUserInterface = (props) => {
 	)
 }
 
-const App = () => {
+const save = () => {
+	const x = [0]
+return (
+		<Grid>
+		{
+				x.map(/*bill*/ (val) => (
+					<Tab /*</Tabs>title={bill.eventName === '' ? 'Create Event' : bill.eventName}*/>
+						<Text key={val}>{val}</Text>
+						<BillUserInterface key={val}/>
+					</Tab>
+				))
+			}
+			//<Tab icon={<Add />}></Tab>
+			</Grid>
+)
+}
+
+const BillsUserInterface = () => {
 	const [bills, setBills] = useState([new Bill()])
 	const updateBills = (property, value, id) => {
 		const update = bills.tab.map(bill => {
@@ -229,7 +248,46 @@ const App = () => {
 		})
 		setBills(update)
 	}
+	const [x, setX] = useState([0])
 	const [activeIndex, setActiveIndex] = useState(0);
+	const [test, setTest] = useState([<Tab key={69} title='init'/>, <Tab key={0} icon={<Add />}/>])
+	const billos = (billoo) => {
+		const tab = billoo.map(bill => <Tab key={bill.id} title='hi'><BillUserInterface key={bill.id}/></Tab>)
+		setTest([...tab, <Tab key={0} icon={<Add />}/>])
+	}
+	return (
+		<Tabs
+			activeIndex={activeIndex}
+			onActive={(index) => {
+				if (index === bills.length) {
+					console.log('ahhh')
+					// Create new tab
+					// Do not open this tab
+					setActiveIndex(activeIndex)
+					setBills([ ...bills, new Bill() ])
+					billos([...bills, new Bill()])
+				} else {
+					setActiveIndex(index)
+				}
+			}}
+			children={test}
+				//const tab = x.map( val => <Tab><Text>{val}</Text></Tab>)
+				//return [...tab, <Tab icon={<Add />}/>]
+				//return tab;
+			//}}
+			 /*
+				x.map( (val) => <Tab title='yo'><Text>{val}</Text></Tab> )
+			}
+			*/
+		>
+			
+		</Tabs>
+	)
+
+}
+
+const App = () => {
+
 	return (
 		<Grommet theme={hpe} full themeMode='dark'>
 			<Page>
@@ -240,25 +298,7 @@ const App = () => {
 							<Box>{subtitle}</Box>
 						}
 					/>
-					<Tabs
-						activeIndex={activeIndex}
-						onActive={(index) => {
-							console.log(index)
-							if (index === bills.length) {
-								// Create new tab
-								// Do not open this tab
-								setActiveIndex(activeIndex)
-								console.log("New Event!")
-							}
-						}}
-					>
-						<Tab title='Bill name'>
-							<BillUserInterface />
-						</Tab>
-						<Tab icon={<Add />}>
-
-						</Tab>
-					</Tabs>
+					<BillsUserInterface />
 					<Box pad={{ top: 'large' }}>
 						<Button primary label='Submit' onClick={() => {
 							console.log('Submit!!!')
