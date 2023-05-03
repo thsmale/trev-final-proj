@@ -104,25 +104,25 @@ const LabelDataTable = (props) => {
  * 		id how handleTab identifies which tab to modify
  * @returns 3 columns that accept input for the Row object
  */
-const TabInputUserInterface = ({ updateTabs, id }) => {
+const TabInputUserInterface = ({ updateBill, id }) => {
 	return (
 		<Grid columns="medium" gap="small" pad={{ bottom: "small" }}>
 			<TextInput
 				placeholder="arthur"
 				onChange={(event) => {
-					updateTabs('name', event.target.value, id)
+					updateBill('name', event.target.value, id)
 				}}
 			/>
 			<TextInput
 				placeholder="pizza"
 				onChange={(event) => {
-					updateTabs('item', event.target.value, id)
+					updateBill('item', event.target.value, id)
 				}}
 			/>
 			<TextInput
 				placeholder="0.00"
 				onChange={(event) => {
-					updateTabs('price', event.target.value, id)
+					updateBill('price', event.target.value, id)
 				}}
 			/>
 		</Grid>
@@ -136,7 +136,7 @@ const TabInputUserInterface = ({ updateTabs, id }) => {
  * 		setTabs sets the state of the tabs array
  * @returns A 3 by X matrix where users can control number of rows X
  */
-const TabUserInterface = ({ tabs, updateTabs, addTab }) => {
+const TabUserInterface = ({ tabs, updateBill, addTab }) => {
 	return (
 		<Grid>
 			<LabelDataTable />
@@ -145,7 +145,7 @@ const TabUserInterface = ({ tabs, updateTabs, addTab }) => {
 					<TabInputUserInterface
 						key={tab.id}
 						id={tab.id}
-						updateTabs={updateTabs}
+						updateBill={updateBill}
 					/>
 				))
 			}
@@ -164,23 +164,18 @@ const TabUserInterface = ({ tabs, updateTabs, addTab }) => {
  */
 const BillUserInterface = (props) => {
 	const [bill, setBill] = useState(new Bill(new Row()));
-	//const [tabs, setTabs] = useState([new Row()]);
-	const updateBill = (property, value) => {
-		setBill({
-			...bill,
-			[property]: value
+	const updateBillMetaData = (property, value) => setBill({
+		...bill,
+		[property]: value
+	})
+	const updateTabs = (property, value, id) => setBill({
+		...bill,
+		tabs: bill.tabs.map(tab => {
+			if (tab.id === id)
+				tab[property] = value
+			return tab
 		})
-	}
-	const updateTabs = (property, value, id) => {
-		setBill({
-			...bill,
-			tabs: bill.tabs.map(tab => {
-				if (tab.id === id)
-					tab[property] = value
-				return tab
-			})
-		})
-	}
+	})
 	const addTab = () => setBill({
 		...bill,
 		tabs: [...bill.tabs, new Row()]
@@ -190,13 +185,13 @@ const BillUserInterface = (props) => {
 		//<Tab title={bill.eventName !== '' ? bill.eventName : 'Create Bill'}>
 		<Grid>
 			<Grid columns='medium' gap='small' pad={{ top: 'small' }}>
-				<EventNameUserInterface updateBill={updateBill} />
-				<BillOwnerUserInterface updateBill={updateBill} />
-				<DateUserInterface updateBill={updateBill} />
+				<EventNameUserInterface updateBill={updateBillMetaData} />
+				<BillOwnerUserInterface updateBill={updateBillMetaData} />
+				<DateUserInterface updateBill={updateBillMetaData} />
 			</Grid>
 			<TabUserInterface
 				tabs={bill.tabs}
-				updateTabs={updateTabs}
+				updateBill={updateTabs}
 				addTab={addTab}
 			/>
 			<PrintTabs tabs={bill.tabs} />
