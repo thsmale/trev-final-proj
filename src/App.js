@@ -223,23 +223,6 @@ const BillUserInterface = (props) => {
 	)
 }
 
-const save = () => {
-	const x = [0]
-return (
-		<Grid>
-		{
-				x.map(/*bill*/ (val) => (
-					<Tab /*</Tabs>title={bill.eventName === '' ? 'Create Event' : bill.eventName}*/>
-						<Text key={val}>{val}</Text>
-						<BillUserInterface key={val}/>
-					</Tab>
-				))
-			}
-			//<Tab icon={<Add />}></Tab>
-			</Grid>
-)
-}
-
 const BillsUserInterface = () => {
 	const [bills, setBills] = useState([new Bill()])
 	const updateBills = (property, value, id) => {
@@ -248,42 +231,32 @@ const BillsUserInterface = () => {
 		})
 		setBills(update)
 	}
-	const [x, setX] = useState([0])
 	const [activeIndex, setActiveIndex] = useState(0);
-	const [test, setTest] = useState([<Tab key={69} title='init'/>, <Tab key={0} icon={<Add />}/>])
-	const billos = (billoo) => {
-		const tab = billoo.map(bill => <Tab key={bill.id} title='hi'><BillUserInterface key={bill.id}/></Tab>)
-		setTest([...tab, <Tab key={0} icon={<Add />}/>])
-	}
 	return (
 		<Tabs
 			activeIndex={activeIndex}
 			onActive={(index) => {
 				if (index === bills.length) {
-					console.log('ahhh')
-					// Create new tab
-					// Do not open this tab
+					// Create a new tab
+					// Do not open this tab as plus tab has no body
+					// Should maybe open newly created tab
 					setActiveIndex(activeIndex)
 					setBills([ ...bills, new Bill() ])
-					billos([...bills, new Bill()])
 				} else {
 					setActiveIndex(index)
 				}
 			}}
-			children={test}
-				//const tab = x.map( val => <Tab><Text>{val}</Text></Tab>)
-				//return [...tab, <Tab icon={<Add />}/>]
-				//return tab;
-			//}}
-			 /*
-				x.map( (val) => <Tab title='yo'><Text>{val}</Text></Tab> )
-			}
-			*/
 		>
-			
+		{
+			bills.map(bill => (
+				<Tab key={bill.id} title={bill.eventName === '' ? 'Create Event' : bill.eventName}>
+					<BillUserInterface key={bill.id}/>
+				</Tab>
+			))
+		}	
+		<Tab icon={<Add />}Tab/>
 		</Tabs>
 	)
-
 }
 
 const App = () => {
