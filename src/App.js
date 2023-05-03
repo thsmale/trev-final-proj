@@ -11,13 +11,14 @@ import {
 	Tabs,
 	Tab,
 	Text,
+	TextArea,
 	TextInput,
 } from 'grommet';
 import { hpe } from 'grommet-theme-hpe';
 import { Add } from 'grommet-icons';
 import { subtitle } from './data.js';
 import { Bill, Row } from './model.js';
-import { PrintBill, PrintTabs } from './debug.js';
+import { PrintBill } from './debug.js';
 
 /**
  * The eventName is used to identify an event such as going to Rileys bar 
@@ -76,6 +77,24 @@ const DateUserInterface = ({ updateBill }) => {
 				onChange={({ value }) => {
 					updateBill('date', value)
 				}}
+			/>
+		</Box>
+	)
+}
+
+/**
+ * A text area to type in a description of the bill
+ * @param {Object}  props
+ * 		updateBill lifts the Bill state up and updates the description property
+ * @returns 
+ */
+const DescriptionUserInterface = ({ updateBill }) => {
+	return (
+		<Box>
+			<Text>Description</Text>
+			<TextArea
+				placeholder="Remember when arthur yaked"
+				onChange={(event) => updateBill('description', event.target.value)}
 			/>
 		</Box>
 	)
@@ -189,12 +208,14 @@ const BillUserInterface = (props) => {
 				<BillOwnerUserInterface updateBill={updateBillMetaData} />
 				<DateUserInterface updateBill={updateBillMetaData} />
 			</Grid>
+			<Box pad={{top: 'small'}}>
+				<DescriptionUserInterface updateBill={updateBillMetaData} />
+			</Box>
 			<TabUserInterface
 				tabs={bill.tabs}
 				updateBill={updateTabs}
 				addTab={addTab}
 			/>
-			<PrintTabs tabs={bill.tabs} />
 			<PrintBill bill={bill} />
 		</Grid>
 	)
