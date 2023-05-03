@@ -23,15 +23,17 @@ import { PrintBill } from './debug.js';
 /**
  * The eventName is used to identify an event such as going to Rileys bar 
  * @param {Object} props 
+ * 		eventName is there so as user switches between tabs values persist
  * 		updateBill will lift the state up and set the bill object
  * @returns Text input which is one of three columns in a row  
  */
-const EventNameUserInterface = ({ updateBill }) => {
+const EventNameUserInterface = ({ eventName, updateBill }) => {
 	return (
 		<Box>
 			<Text>Event</Text>
 			<TextInput
 				placeholder="Event i.e. restaurant, game, bar"
+				value={eventName}
 				onChange={(event) => {
 					updateBill('eventName', event.target.value)
 				}}
@@ -44,15 +46,17 @@ const EventNameUserInterface = ({ updateBill }) => {
  * 
  * The owner is who paid the bill
  * @param {Object} props 
+ * 		owner so if user switches tab and returns the value will be there in the UI
  * 		updateBill sets the state of stateful object Bill
  * @returns Text input to type in the owner name
  */
-const BillOwnerUserInterface = ({ updateBill }) => {
+const BillOwnerUserInterface = ({ owner, updateBill }) => {
 	return (
 		<Box>
 			<Text>Owner name</Text>
 			<TextInput
 				placeholder='Owner i.e Trevor paid this bill'
+				value={owner}
 				onChange={(event) => {
 					updateBill('owner', event.target.value)
 				}}
@@ -66,15 +70,17 @@ const BillOwnerUserInterface = ({ updateBill }) => {
  * TODO: Add time as option
  * Provide feedback if date invalid i.e they type 12
  * @param {Object} props 
+ * 		date the current value of the date in the stateful Bill object
  * 		updateBill lifts the state up and sets the stateful Bill object
  * @returns A calander to select the date or formatted input
  */
-const DateUserInterface = ({ updateBill }) => {
+const DateUserInterface = ({ date, updateBill }) => {
 	return (
 		<Box>
 			<Text>Date</Text>
 			<DateInput
 				format="mm/dd/yyyy"
+				value={date}
 				onChange={({ value }) => {
 					// If input not typed correctly value will be undefined
 					updateBill('date', value || '')
@@ -87,15 +93,17 @@ const DateUserInterface = ({ updateBill }) => {
 /**
  * A text area to type in a description of the bill
  * @param {Object}  props
+ * 		description the current value in the Bill stateful object
  * 		updateBill lifts the Bill state up and updates the description property
  * @returns 
  */
-const DescriptionUserInterface = ({ updateBill }) => {
+const DescriptionUserInterface = ({ description, updateBill }) => {
 	return (
 		<Box>
 			<Text>Description</Text>
 			<TextArea
 				placeholder="Remember when arthur yaked"
+				value={description}
 				onChange={(event) => updateBill('description', event.target.value)}
 			/>
 		</Box>
@@ -121,27 +129,31 @@ const LabelDataTable = (props) => {
 /**
  * 
  * @param {Object} props 
+ * 		tab the Row object in the array which is in the stateful object Bill
  * 		updateTabs a function that iterates over the tabs and mutates the respective tab
  * 		id how handleTab identifies which tab to modify
  * @returns 3 columns that accept input for the Row object
  */
-const TabInputUserInterface = ({ updateBill, id }) => {
+const TabInputUserInterface = ({ tab, updateBill, id }) => {
 	return (
 		<Grid columns="medium" gap="small" pad={{ bottom: "small" }}>
 			<TextInput
 				placeholder="arthur"
+				value={tab.name}
 				onChange={(event) => {
 					updateBill('name', event.target.value, id)
 				}}
 			/>
 			<TextInput
 				placeholder="pizza"
+				value={tab.item}
 				onChange={(event) => {
 					updateBill('item', event.target.value, id)
 				}}
 			/>
 			<TextInput
 				placeholder="0.00"
+				value={tab.price}
 				onChange={(event) => {
 					updateBill('price', event.target.value, id)
 				}}
@@ -166,6 +178,7 @@ const TabUserInterface = ({ tabs, updateBill, addTab }) => {
 					<TabInputUserInterface
 						key={tab.id}
 						id={tab.id}
+						tab={tab}
 						updateBill={updateBill}
 					/>
 				))
@@ -204,15 +217,26 @@ const BillUserInterface = ({ bill, updateBills }) => {
 	})
 
 	return (
-		//<Tab title={bill.eventName !== '' ? bill.eventName : 'Create Bill'}>
 		<Grid>
 			<Grid columns='medium' gap='small' pad={{ top: 'small' }}>
-				<EventNameUserInterface updateBill={updateBillMetaData} />
-				<BillOwnerUserInterface updateBill={updateBillMetaData} />
-				<DateUserInterface updateBill={updateBillMetaData} />
+				<EventNameUserInterface 
+					eventName={bill.eventName}
+					updateBill={updateBillMetaData} 
+				/>
+				<BillOwnerUserInterface 
+					owner={bill.owner}
+					updateBill={updateBillMetaData} 
+				/>
+				<DateUserInterface 
+					date={bill.date}
+					updateBill={updateBillMetaData} 
+				/>
 			</Grid>
 			<Box pad={{ top: 'small' }}>
-				<DescriptionUserInterface updateBill={updateBillMetaData} />
+				<DescriptionUserInterface 
+					description={bill.description}
+					updateBill={updateBillMetaData} 
+				/>
 			</Box>
 			<TabUserInterface
 				tabs={bill.tabs}
