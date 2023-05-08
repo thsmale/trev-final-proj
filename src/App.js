@@ -219,23 +219,23 @@ const BillUserInterface = ({ bill, updateBills }) => {
 	return (
 		<Grid>
 			<Grid columns='medium' gap='small' pad={{ top: 'small' }}>
-				<EventNameUserInterface 
+				<EventNameUserInterface
 					eventName={bill.eventName}
-					updateBill={updateBillMetaData} 
+					updateBill={updateBillMetaData}
 				/>
-				<BillOwnerUserInterface 
+				<BillOwnerUserInterface
 					owner={bill.owner}
-					updateBill={updateBillMetaData} 
+					updateBill={updateBillMetaData}
 				/>
-				<DateUserInterface 
+				<DateUserInterface
 					date={bill.date}
-					updateBill={updateBillMetaData} 
+					updateBill={updateBillMetaData}
 				/>
 			</Grid>
 			<Box pad={{ top: 'small' }}>
-				<DescriptionUserInterface 
+				<DescriptionUserInterface
 					description={bill.description}
-					updateBill={updateBillMetaData} 
+					updateBill={updateBillMetaData}
 				/>
 			</Box>
 			<TabUserInterface
@@ -248,16 +248,25 @@ const BillUserInterface = ({ bill, updateBills }) => {
 	)
 }
 
-const BillsUserInterface = () => {
+const sendBills = async (bills) => {
+	const response = await fetch('http://localhost:8000/bill', {
+		method: 'post',
+	})
+	return response.json();
+}
+
+const BillsUserInterface = ({ bills, setBills, updateBill }) => {
+	/*
 	const [bills, setBills] = useState([new Bill(new Row())])
 	const updateBill = (newBill) => {
 		const update = bills.map(bill => {
-			if (bill.id === newBill.id) 
+			if (bill.id === newBill.id)
 				return newBill
 			return bill
 		})
 		setBills(update)
 	}
+	*/
 	const [activeIndex, setActiveIndex] = useState(0);
 	return (
 		<Tabs
@@ -268,30 +277,38 @@ const BillsUserInterface = () => {
 					// Do not open this tab as plus tab has no body
 					// Should maybe open newly created tab
 					setActiveIndex(activeIndex)
-					setBills([ ...bills, new Bill(new Row()) ])
+					setBills([...bills, new Bill(new Row())])
 				} else {
 					setActiveIndex(index)
 				}
 			}}
 		>
-		{
-			bills.map(bill => (
-				<Tab key={bill.id} title={bill.eventName === '' ? 'New bill' : bill.eventName}>
-					<BillUserInterface 
-						key={bill.id}
-						bill={bill}
-						updateBills={updateBill}
-					/>
-				</Tab>
-			))
-		}	
-		<Tab icon={<Add />}Tab/>
+			{
+				bills.map(bill => (
+					<Tab key={bill.id} title={bill.eventName === '' ? 'New bill' : bill.eventName}>
+						<BillUserInterface
+							key={bill.id}
+							bill={bill}
+							updateBills={updateBill}
+						/>
+					</Tab>
+				))
+			}
+			<Tab icon={<Add />} Tab />
 		</Tabs>
 	)
 }
 
 const App = () => {
-
+	const [bills, setBills] = useState([new Bill(new Row())])
+	const updateBill = (newBill) => {
+		const update = bills.map(bill => {
+			if (bill.id === newBill.id)
+				return newBill
+			return bill
+		})
+		setBills(update)
+	}
 	return (
 		<Grommet theme={hpe} full themeMode='dark'>
 			<Page>
@@ -302,10 +319,19 @@ const App = () => {
 							<Box>{subtitle}</Box>
 						}
 					/>
-					<BillsUserInterface />
+					<BillsUserInterface 
+						bills={bills} 
+						setBills={setBills}
+						updateBill={updateBill}
+					/>
 					<Box pad={{ top: 'large' }}>
-						<Button primary label='Submit' onClick={() => {
-							console.log('Submit!!!')
+						<Button primary label='Submit' onClick={async () => {
+							try {
+								const response = await sendBills(bills)
+								console.log(response)
+							} catch (err) {
+								console.log(err)
+							}
 						}}
 						/>
 					</Box>
