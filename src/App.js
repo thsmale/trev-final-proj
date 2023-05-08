@@ -276,7 +276,7 @@ const BillsUserInterface = () => {
 		>
 		{
 			bills.map(bill => (
-				<Tab key={bill.id} title={bill.eventName === '' ? 'Create Event' : bill.eventName}>
+				<Tab key={bill.id} title={bill.eventName === '' ? 'New bill' : bill.eventName}>
 					<BillUserInterface 
 						key={bill.id}
 						bill={bill}
