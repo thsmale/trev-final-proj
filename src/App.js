@@ -250,23 +250,18 @@ const BillUserInterface = ({ bill, updateBills }) => {
 
 const sendBills = async (bills) => {
 	const response = await fetch('http://localhost:8000/bill', {
-		method: 'post',
+		mode: 'cors',
+		credentials: 'same-origin',
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(bills)
 	})
 	return response.json();
 }
 
 const BillsUserInterface = ({ bills, setBills, updateBill }) => {
-	/*
-	const [bills, setBills] = useState([new Bill(new Row())])
-	const updateBill = (newBill) => {
-		const update = bills.map(bill => {
-			if (bill.id === newBill.id)
-				return newBill
-			return bill
-		})
-		setBills(update)
-	}
-	*/
 	const [activeIndex, setActiveIndex] = useState(0);
 	return (
 		<Tabs

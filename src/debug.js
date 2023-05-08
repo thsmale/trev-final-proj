@@ -11,11 +11,7 @@ export const PrintBill = ({ bill }) => {
 		<Button
 			label='Print bill'
 			onClick={() => {
-				console.log('PRINT BILL\n\n\n')
 				console.log(bill)
-				console.log(`Tab length: ${bill.tabs.length}`)
-				bill.tabs.map(bill => console.log(bill))
-				console.log('--------------')
 			}}
 		/>
 	)
