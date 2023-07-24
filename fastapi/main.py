@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Union
+import pandas as pd
 
 
 tab_schema_example = {
@@ -30,7 +31,6 @@ class Bill(BaseModel):
     description: str
     tabs: list[Tab]
 
-
     class Config: 
         schema_extra = {
                 'example': {
@@ -58,7 +58,32 @@ app.add_middleware(
 )
 
 @app.post("/bill")
-async def post_bill(bills: list[Bill]):
-    #body = await request.body()
+async def post_bill(request: Request):
+    payload = await request.body()
+    payload = payload.decode('utf-8')
+    payload = pd.read_json(payload)
+    print(payload)
+    """
     print(bills)
+    print(bills[0].owner)
+    print(type(bills[0]))
+    temp = pd.DataFrame(data=bills)
+    print(temp)
+    temp2 = pd.DataFrame.from_records([[bill.to_dict()] for bill in bills])
+    print(temp2)
+    """
+    """
+    df = pd.DataFrame(data=bills, 
+                      columns=[
+                          'id', 
+                          'eventName',
+                          'owner',
+                          'date',
+                          'description',
+                          'tabs'
+                          ])
+    print(df)
+    tabs = pd.DataFrame([vars(s) for s in bills[0].tabs], columns=['id', 'name', 'item', 'price'])
+    print(tabs)
+    """
     return {"Hello": "World"}
