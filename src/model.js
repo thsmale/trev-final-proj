@@ -10,6 +10,8 @@ export function Bill(tab) {
 	this.owner = '';
 	this.date = '';
 	this.description = '';
+	this.tax = '';
+	this.tip = '';
 	if (tab === undefined || tab === null)
 		this.tabs = [];
 	else
