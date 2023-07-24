@@ -418,13 +418,7 @@ const App = () => {
 							setShowTotals(true)
 							try {
 								const response = await sendBills(bills)
-								let venmoPath = ''
-								for (const venmo of response) {
-									venmoPath += venmo + '<br></br>'
-								}
-								console.log(venmoPath)
 								setVenmoInstructions(response)
-								console.log(response)
 							} catch (err) {
 								console.log(err)
 							}
