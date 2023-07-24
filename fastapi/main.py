@@ -22,7 +22,9 @@ async def post_bill(request: Request):
     payload = await request.body()
     payload = payload.decode('utf-8')
     dfs, master, df_name_date, df_list = receipt_to_df(payload)
+    # TODO integrate payments_df
     payments_df, instructions = calc_pay(master)
-    print(payments_df)
-    print(instructions)
-    return {"Hello": "World"}
+    response = {
+        'instructions': instructions
+    }
+    return instructions
