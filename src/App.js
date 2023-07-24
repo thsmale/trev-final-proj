@@ -9,6 +9,11 @@ import {
 	PageContent,
 	PageHeader,
 	Tabs,
+	Table,
+	TableBody,
+	TableCell,
+	TableHeader,
+	TableRow,
 	Tab,
 	Text,
 	TextArea,
@@ -18,7 +23,7 @@ import { hpe } from 'grommet-theme-hpe';
 import { Add } from 'grommet-icons';
 import { subtitle } from './data.js';
 import { Bill, Row } from './model.js';
-import { PrintBill } from './debug.js';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * The eventName is used to identify an event such as going to Rileys bar 
@@ -191,6 +196,35 @@ const TabUserInterface = ({ tabs, updateBill, addTab }) => {
 	)
 }
 
+const TaxUserInterface = ({ tax, updateBill }) => {
+	return (
+		<Box>
+			<Text>Tax</Text>
+			<TextInput
+				placeholder='The tax on the bill. Not % percentages.'
+				value={tax}
+				onChange={(event) => {
+					updateBill('tax', event.target.value)
+				}}
+			/>
+		</Box>
+	)
+}
+
+const TipUserInterface = ({ tip, updateBill }) => {
+	return (
+		<Box>
+			<Text>Tip</Text>
+			<TextInput
+				placeholder='The amount you tipped. Not % percentages.'
+				value={tip}
+				onChange={(event) => {
+					updateBill('tip', event.target.value)
+				}}
+			/>
+		</Box>
+	)
+}
 /**
  * TODO: Add description input and add mark required fields w/ red *
  * @param {*} props 
@@ -243,13 +277,23 @@ const BillUserInterface = ({ bill, updateBills }) => {
 				updateBill={updateTabs}
 				addTab={addTab}
 			/>
-			<PrintBill bill={bill} />
+			<Grid columns='1/2' gap='small' pad={{ top: 'small' }}>
+				<TaxUserInterface
+					tax={bill.tax}
+					updateBill={updateBillMetaData}
+				/>
+				<TipUserInterface
+					tip={bill.tip}
+					updateBill={updateBillMetaData}
+				/>
+			</Grid>
+
 		</Grid>
 	)
 }
 
 const sendBills = async (bills) => {
-	const response = await fetch('http://localhost:8000/bill', {
+	const response = await fetch('http://localhost:3001/bill', {
 		mode: 'cors',
 		credentials: 'same-origin',
 		method: 'POST',
@@ -294,6 +338,53 @@ const BillsUserInterface = ({ bills, setBills, updateBill }) => {
 	)
 }
 
+const TotalOutputRow = ({name, price}) => {
+	return (
+		<TableRow>
+			<TableCell scope='row'></TableCell>
+			<TableCell>{name}</TableCell>
+			<TableCell>{price}</TableCell>
+		</TableRow>
+	)
+}
+
+const TotalOutput = (props) => {
+	return (
+		<Table>
+			<TableHeader>
+				<TableCell scope='col' border='bottom'>
+					Name
+				</TableCell>
+				<TableCell scope='col' border='bottom'>
+					Price
+				</TableCell>
+			</TableHeader>
+			<TableBody>
+				{
+					Object.keys(props.totals).map(name => ((
+						<TotalOutputRow total={{name, price: props.totals[name]}}/>
+					)))
+				}
+			</TableBody>
+		</Table>
+	)
+}
+
+const calculateTotal = (bills) => {
+	let totals = {}
+	for (const bill of bills) {
+		for (const tab of bill.tabs) {
+			const name = tab.name.toLowerCase()
+			if (totals[name] === undefined || totals[name] === null)
+				totals[name] = Number(tab.price)
+			else 
+				totals[name] += Number(tab.price)
+		}
+	}
+	console.log(totals)
+	return totals
+}
+
 const App = () => {
 	const [bills, setBills] = useState([new Bill(new Row())])
 	const updateBill = (newBill) => {
@@ -304,12 +395,14 @@ const App = () => {
 		})
 		setBills(update)
 	}
+	const [showTotals, setShowTotals] = useState(true)
+	const [venmoInstructions, setVenmoInstructions ] = useState([])
 	return (
 		<Grommet theme={hpe} full themeMode='dark'>
 			<Page>
 				<PageContent>
 					<PageHeader
-						title="Trevor Final Project"
+						title="FinFriends"
 						subtitle={
 							<Box>{subtitle}</Box>
 						}
@@ -319,16 +412,29 @@ const App = () => {
 						setBills={setBills}
 						updateBill={updateBill}
 					/>
+
 					<Box pad={{ top: 'large' }}>
 						<Button primary label='Submit' onClick={async () => {
+							setShowTotals(true)
 							try {
 								const response = await sendBills(bills)
+								let venmoPath = ''
+								for (const venmo of response) {
+									venmoPath += venmo + '<br></br>'
+								}
+								console.log(venmoPath)
+								setVenmoInstructions(response)
 								console.log(response)
 							} catch (err) {
 								console.log(err)
 							}
 						}}
 						/>
+					{
+						venmoInstructions.map( venmo => (
+							<Text key={uuidv4()}>{venmo}</Text>
+						))
+					}
 					</Box>
 				</PageContent>
 			</Page>
