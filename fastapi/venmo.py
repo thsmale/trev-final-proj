@@ -1,16 +1,59 @@
 import json
 import pandas as pd
 
+data = [
+  {
+    "id": "50f3c690-1668-40d4-abd5-edc7f73fdca6",
+    "eventName": "d",
+    "owner": "Jamie",
+    "date": "d",
+    "description": "d",
+    "tax": "3.4",
+    "tip": "4.34",
+    "tabs": [
+      {
+        "id": "5c1c9626-6877-4cb8-bfb9-d29d0ead33cd",
+        "name": "ytrff",
+        "item": "d",
+        "price": "32.3"
+      },
+      {
+        "id": "37d51981-05c1-45c3-a031-529eedef0230",
+        "name": "dsfdsf",
+        "item": "sdc",
+        "price": "3.34"
+      },
+      {
+        "id": "d85ce369-aad3-45e8-a0b9-f1167e64b2dc",
+        "name": "das",
+        "item": "fafadf",
+        "price": "2.3"
+      },
+      {
+        "id": "0e1e3476-a4df-4bd4-853f-f2bcfd91b890",
+        "name": "asd",
+        "item": "da",
+        "price": "2.34"
+      }
+    ]
+  }
+]
+
 # json_data is a utf-8 encoded string from JSON
+# Converts string to a list
 def convert_format(json_data):
     # Convert json str to py dict
-    python_dict = json.loads(json_data)
+    json_data = json.loads(json_data)
+    new_format_list = []
+    for python_dict in json_data:
+        print(python_dict)
+        new_format = {}
+        new_format["exp_date"] = {python_dict["owner"]: python_dict["date"]}
+        new_format["lines"] = [(tab["name"], tab["item"], float(tab["price"])) for tab in python_dict["tabs"]]
+        new_format["tax_tip"] = (float(python_dict["tax"]), float(python_dict["tip"]))
+        new_format_list.append(new_format)
 
-    new_format = {}
-    new_format["exp_date"] = {python_dict["owner"]: python_dict["date"]}  
-    new_format["lines"] = [(tab["name"], tab["item"], float(tab["price"])) for tab in python_dict["tabs"]]
-    new_format["tax_tip"] = (float(python_dict["tax"]), float(python_dict["tip"]))  
-    return new_format 
+    return new_format_list
 
 def intake(exp_date, lines, tax_tip):
     items = {}
@@ -45,7 +88,7 @@ def intake(exp_date, lines, tax_tip):
 
 # json is a utf-8 encoded string from JSON
 def receipt_to_df(json):
-    data = [convert_format(json)]
+    data = convert_format(json)
     dfs = {}
     df_list = []
     df_name_date = {}  # Keep track of the date for each DataFrame
@@ -148,4 +191,3 @@ def receipt_to_df(json):
     
     print(data)
     return (dfs, master, df_name_date, df_list)
-   
