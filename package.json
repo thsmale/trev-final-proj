@@ -9,6 +9,7 @@
     "grommet": "^2.31.0",
     "grommet-icons": "^4.10.0",
     "grommet-theme-hpe": "^5.0.2",
+    "netlify-cli": "^16.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
