@@ -293,7 +293,7 @@ const BillUserInterface = ({ bill, updateBills }) => {
 }
 
 const sendBills = async (bills) => {
-	const response = await fetch('http://localhost:3001/bill', {
+	const response = await fetch('https://fastapi-1-i3987591.deta.app/bill', {
 		mode: 'cors',
 		credentials: 'same-origin',
 		method: 'POST',
@@ -419,6 +419,8 @@ const App = () => {
 							try {
 								const response = await sendBills(bills)
 								setVenmoInstructions(response)
+								console.log("response from API");
+								console.log(response);
 							} catch (err) {
 								console.log(err)
 							}
