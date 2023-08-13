@@ -21,7 +21,9 @@
     "start": "react-scripts start",
     "build": "CI=FALSE && react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "yo":"ECHO YOOOOOOOOOOOOO",
+    "fastapi": "cd fastapi && uvicorn main:app --reload --port 3001"
   },
   "eslintConfig": {
     "extends": [
