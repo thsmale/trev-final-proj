@@ -1,0 +1,29 @@
+{
+    "id": "b13a1ac5-0201-40c0-a6a1-b07fe34450a2",
+    "eventName": "Elpehante",
+    "owner": "Jamie",
+    "date": "2023-07-04T07:00:00.000Z",
+    "description": "Fancy dinner in LA ",
+    "tax": "3.2",
+    "tip": "10.2",
+    "tabs": [
+      {
+        "id": "cf3a9302-1e83-44ab-bf2c-c97574135c4e",
+        "name": "Jamie",
+        "item": "Pizza",
+        "price": "30"
+      },
+      {
+        "id": "2fc47b8b-597c-4ee6-b0c5-52e248e0aa53",
+        "name": "Nick",
+        "item": "Soup",
+        "price": "15"
+      },
+      {
+        "id": "fe382c4b-7f00-444a-beb7-0e52d8114b44",
+        "name": "Jared",
+        "item": "Chicken",
+        "price": "20"
+      }
+    ]
+  }
