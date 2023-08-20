@@ -35,18 +35,19 @@ import { v4 as uuidv4 } from 'uuid';
  * 		updateBill will lift the state up and set the bill object
  * @returns Text input which is one of three columns in a row  
  */
-const EventNameUserInterface = ({ eventName, updateBill }) => {
+const EventFormField = ({ eventName, updateBill }) => {
 	return (
-		<Box>
-			<Text>Event</Text>
+		 <FormField name="event" htmlFor="event-id" label="Event">
 			<TextInput
+				id="event-id"
+				name="event"
 				placeholder="Event i.e. restaurant, game, bar"
 				value={eventName}
 				onChange={(event) => {
 					updateBill('eventName', event.target.value)
 				}}
 			/>
-		</Box>
+		</FormField>
 	)
 }
 
@@ -58,7 +59,7 @@ const EventNameUserInterface = ({ eventName, updateBill }) => {
  * 		updateBill sets the state of stateful object Bill
  * @returns Text input to type in the owner name
  */
-const BillOwnerUserInterface = ({ owner, updateBill }) => {
+const OwnerFormField = ({ owner, updateBill }) => {
 	return (
 		<Box>
 			<Text>Owner name</Text>
@@ -99,22 +100,49 @@ const DateUserInterface = ({ date, updateBill }) => {
 }
 
 /**
+ * Date is an optional field to record the day of the event 
+ * TODO: Add time as option
+ * Provide feedback if date invalid i.e they type 12
+ * @param {Object} props 
+ * 		date the current value of the date in the stateful Bill object
+ * 		updateBill lifts the state up and sets the stateful Bill object
+ * @returns A calander to select the date or formatted input
+ */
+const DateFormField = ({ date, updateBill }) => {
+	return (
+		<FormField name="date" htmlFor="date-id" label="Date">
+			<DateInput
+				id="date-id"
+				name="date"
+				format="mm/dd/yyyy"
+				value={date}
+				onChange={({ value }) => {
+					// If input not typed correctly value will be undefined
+					updateBill('date', value || '')
+				}}
+			/>
+		</FormField>
+	)
+}
+
+/**
  * A text area to type in a description of the bill
  * @param {Object}  props
  * 		description the current value in the Bill stateful object
  * 		updateBill lifts the Bill state up and updates the description property
  * @returns 
  */
-const DescriptionUserInterface = ({ description, updateBill }) => {
+const DescriptionFormField = ({ description, updateBill }) => {
 	return (
-		<Box>
-			<Text>Description</Text>
+		<FormField name="description" htmlFor="description-id" label="Description">
 			<TextArea
+				id="description-id"
+				name="description"
 				placeholder="Remember when arthur yaked"
 				value={description}
 				onChange={(event) => updateBill('description', event.target.value)}
 			/>
-		</Box>
+		</FormField>
 	)
 }
 
@@ -130,48 +158,13 @@ const LabelDataTable = (props) => {
 	);
 }
 
-/**
- * 
- * @param {Object} props 
- * 		tab the Row object in the array which is in the stateful object Bill
- * 		updateTabs a function that iterates over the tabs and mutates the respective tab
- * 		id how handleTab identifies which tab to modify
- * @returns 3 columns that accept input for the Row object
- */
-const TabInputUserInterface = ({ tab, updateBill, id }) => {
-	return (
-		<Grid columns="medium" gap="small" pad={{ bottom: "small" }}>
-			<TextInput
-				placeholder="Name i.e Arthur"
-				value={tab.name}
-				onChange={(event) => {
-					updateBill('name', event.target.value, id)
-				}}
-			/>
-			<TextInput
-				placeholder="Item i.e pizza"
-				value={tab.item}
-				onChange={(event) => {
-					updateBill('item', event.target.value, id)
-				}}
-			/>
-			<TextInput
-				placeholder="Price i.e 0.00"
-				value={tab.price}
-				onChange={(event) => {
-					updateBill('price', event.target.value, id)
-				}}
-			/>
-		</Grid>
-	);
-}
-
 const TabFormInputUserInterface = ({ tab, updateBill, id }) => {
 	return (
 		<>
 		<FormField name="name" htmlFor="name-input-id" label="Name">
 			<TextInput
 				id="name-input-id"
+				name="name"
 				placeholder="Name i.e Arthur"
 				value={tab.name}
 				onChange={(event) => {
@@ -182,6 +175,7 @@ const TabFormInputUserInterface = ({ tab, updateBill, id }) => {
 		<FormField name="item" htmlFor="item-input-id" label="Item">
 			<TextInput
 				id = "item-input-id"
+				name="item"
 				placeholder="Item i.e pizza"
 				value={tab.item}
 				onChange={(event) => {
@@ -191,6 +185,8 @@ const TabFormInputUserInterface = ({ tab, updateBill, id }) => {
 		</FormField>
 		<FormField name="price" htmlFor="price-input-id" label="Price">
 			<TextInput
+				id="price-input-id"
+				name="price"
 				placeholder="Price i.e 0.00"
 				value={tab.price}
 				onChange={(event) => {
@@ -212,6 +208,7 @@ const TabFormInputUserInterface = ({ tab, updateBill, id }) => {
 const TabUserInterface = ({ tabs, updateBill, addTab }) => {
 	return (
 		<Grid>
+			<LabelDataTable/>
 			{
 				tabs.map(tab => (
 					<TabFormInputUserInterface
@@ -232,31 +229,33 @@ const TabUserInterface = ({ tabs, updateBill, addTab }) => {
 
 const TaxUserInterface = ({ tax, updateBill }) => {
 	return (
-		<Box>
-			<Text>Tax</Text>
+		<FormField name="tax" htmlFor="tax-id" label="Tax">
 			<TextInput
+				id="tax-id"
+				name="tax"
 				placeholder='The tax on the bill. Not % percentages.'
 				value={tax}
 				onChange={(event) => {
 					updateBill('tax', event.target.value)
 				}}
 			/>
-		</Box>
+		</FormField>
 	)
 }
 
 const TipUserInterface = ({ tip, updateBill }) => {
 	return (
-		<Box>
-			<Text>Tip</Text>
+		<FormField name="tip" htmlFor="tip-id" label="Tip">
 			<TextInput
+				id="tip-id"
+				name="tip"
 				placeholder='The amount you tipped. Not % percentages.'
 				value={tip}
 				onChange={(event) => {
 					updateBill('tip', event.target.value)
 				}}
 			/>
-		</Box>
+		</FormField>
 	)
 }
 /**
@@ -285,33 +284,28 @@ const BillUserInterface = ({ bill, updateBills }) => {
 	})
 
 	return (
-		<Grid>
-			<Grid columns='medium' gap='small' pad={{ top: 'small' }}>
-				<EventNameUserInterface
+		<Form>
+				<EventFormField
 					eventName={bill.eventName}
 					updateBill={updateBillMetaData}
 				/>
-				<BillOwnerUserInterface
+				<OwnerFormField
 					owner={bill.owner}
 					updateBill={updateBillMetaData}
 				/>
-				<DateUserInterface
+				<DateFormField
 					date={bill.date}
 					updateBill={updateBillMetaData}
 				/>
-			</Grid>
-			<Box pad={{ top: 'small' }}>
-				<DescriptionUserInterface
+				<DescriptionFormField
 					description={bill.description}
 					updateBill={updateBillMetaData}
 				/>
-			</Box>
 			<TabUserInterface
 				tabs={bill.tabs}
 				updateBill={updateTabs}
 				addTab={addTab}
 			/>
-			<Grid columns='1/2' gap='small' pad={{ top: 'small' }}>
 				<TaxUserInterface
 					tax={bill.tax}
 					updateBill={updateBillMetaData}
@@ -320,9 +314,7 @@ const BillUserInterface = ({ bill, updateBills }) => {
 					tip={bill.tip}
 					updateBill={updateBillMetaData}
 				/>
-			</Grid>
-
-		</Grid>
+		</Form>
 	)
 }
 
@@ -440,7 +432,7 @@ const BillsUserInterface = ({ bills, setBills, updateBill }) => {
 			{
 				bills.map(bill => (
 					<Tab key={bill.id} title={bill.eventName === '' ? 'New bill' : bill.eventName}>
-						<BillFormUserInterface
+						<BillUserInterface
 							key={bill.id}
 							bill={bill}
 							updateBills={updateBill}
