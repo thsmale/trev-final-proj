@@ -143,21 +143,21 @@ const TabInputUserInterface = ({ tab, updateBill, id }) => {
 	return (
 		<Grid columns="medium" gap="small" pad={{ bottom: "small" }}>
 			<TextInput
-				placeholder="arthur"
+				placeholder="Name i.e Arthur"
 				value={tab.name}
 				onChange={(event) => {
 					updateBill('name', event.target.value, id)
 				}}
 			/>
 			<TextInput
-				placeholder="pizza"
+				placeholder="Item i.e pizza"
 				value={tab.item}
 				onChange={(event) => {
 					updateBill('item', event.target.value, id)
 				}}
 			/>
 			<TextInput
-				placeholder="0.00"
+				placeholder="Price i.e 0.00"
 				value={tab.price}
 				onChange={(event) => {
 					updateBill('price', event.target.value, id)
@@ -395,7 +395,6 @@ const App = () => {
 		})
 		setBills(update)
 	}
-	const [showTotals, setShowTotals] = useState(true)
 	const [venmoInstructions, setVenmoInstructions ] = useState([])
 	return (
 		<Grommet theme={hpe} full themeMode='dark'>
@@ -415,13 +414,16 @@ const App = () => {
 
 					<Box pad={{ top: 'large' }}>
 						<Button primary label='Submit' onClick={async () => {
-							setShowTotals(true)
 							try {
 								const response = await sendBills(bills)
 								setVenmoInstructions(response)
 								console.log("response from API");
 								console.log(response);
 							} catch (err) {
+								setVenmoInstructions([
+									"An error occured",
+									err.toString()
+								])
 								console.log(err)
 							}
 						}}
