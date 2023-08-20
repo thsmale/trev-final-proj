@@ -318,87 +318,6 @@ const BillUserInterface = ({ bill, updateBills }) => {
 	)
 }
 
-/**
- * TODO: Add description input and add mark required fields w/ red *
- * @param {*} props 
- * @returns 
- */
-const BillFormUserInterface = ({ bill, updateBills }) => {
-	const [value, setValue] = React.useState({});
-	const updateBillMetaData = (property, value) => updateBills({
-		...bill,
-		[property]: value
-	})
-	const updateTabs = (property, value, id) => {
-		updateBills({
-			...bill,
-			tabs: bill.tabs.map(tab => {
-				if (tab.id === id)
-					tab[property] = value
-				return tab
-			})
-		})
-	}
-	const addTab = () => updateBills({
-		...bill,
-		tabs: [...bill.tabs, new Row()]
-	})
-
-	return (
-	  <Form
-		value={value}
-		onChange={nextValue => setValue(nextValue)}
-		onSubmit={({ value }) => {}}
-	  >
-		<FormField name="event" htmlFor="text-input-event-id" label="Event">
-		  <TextInput 
-		  	id="text-input-event-id" 
-			name="event" 
-			placeholder="Event i.e restaurant, bar, concert"
-		  />
-		</FormField>
-		<FormField name="owner" htmlFor="text-input-owner-id" label="Owner">
-		  <TextInput 
-		  	id="text-input-owner-id" 
-			name="owner" 
-			placeholder="Owner i.e Trevor"
-		  />
-		</FormField>
-		<FormField name="date" htmlFor="date-input-id" label="Date">
-			<DateInput/>
-		</FormField>
-		<FormField name="description" htmlFor="description-id" label="Description">
-		  <TextInput 
-		  	id="description-id" 
-			name="description" 
-			placeholder="Remember when Arthur yaked"
-		/>
-		</FormField>
-		<LabelDataTable/>
-		<TabUserInterface
-			tabs={bill.tabs}
-			updateBill={updateTabs}
-			addTab={addTab}
-		/>
-		<FormField name="tax" htmlFor="tax-id" label="Tax">
-		  <TextInput 
-		  	id="tax-id" 
-			name="tax" 
-			placeholder="The tax on the bill. Not % percentages."
-		  />
-		</FormField>
-		<FormField name="tip" htmlFor="tip-id" label="Tip">
-		  <TextInput 
-		  	id="tip-id" 
-			name="tip" 
-			placeholder="The tip on the bill. Not % percentages."
-		  />
-		</FormField>
-	   </Form>
-	)
-}
-
-
 const sendBills = async (bills) => {
 	const response = await fetch('https://fastapi-1-i3987591.deta.app/bill', {
 		mode: 'cors',
@@ -475,21 +394,6 @@ const TotalOutput = (props) => {
 			</TableBody>
 		</Table>
 	)
-}
-
-const calculateTotal = (bills) => {
-	let totals = {}
-	for (const bill of bills) {
-		for (const tab of bill.tabs) {
-			const name = tab.name.toLowerCase()
-			if (totals[name] === undefined || totals[name] === null)
-				totals[name] = Number(tab.price)
-			else 
-				totals[name] += Number(tab.price)
-		}
-	}
-	console.log(totals)
-	return totals
 }
 
 const DisplaySpinner = ({ display }) => {
