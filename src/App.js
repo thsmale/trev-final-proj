@@ -8,6 +8,7 @@ import {
 	Page,
 	PageContent,
 	PageHeader,
+	Spinner,
 	Tabs,
 	Table,
 	TableBody,
@@ -60,7 +61,7 @@ const BillOwnerUserInterface = ({ owner, updateBill }) => {
 		<Box>
 			<Text>Owner name</Text>
 			<TextInput
-				placeholder='Owner i.e Trevor paid this bill'
+				placeholder='Owner i.e Trevor'
 				value={owner}
 				onChange={(event) => {
 					updateBill('owner', event.target.value)
@@ -385,6 +386,12 @@ const calculateTotal = (bills) => {
 	return totals
 }
 
+const DisplaySpinner = ({ display }) => {
+	if (display) {
+		return <Spinner />
+	}
+}
+
 const App = () => {
 	const [bills, setBills] = useState([new Bill(new Row())])
 	const updateBill = (newBill) => {
@@ -396,6 +403,7 @@ const App = () => {
 		setBills(update)
 	}
 	const [venmoInstructions, setVenmoInstructions ] = useState([])
+	const [loadSpinner, setLoadSpinner] = useState(0);
 	return (
 		<Grommet theme={hpe} full themeMode='dark'>
 			<Page>
@@ -414,6 +422,7 @@ const App = () => {
 
 					<Box pad={{ top: 'large' }}>
 						<Button primary label='Submit' onClick={async () => {
+							setLoadSpinner(1);
 							try {
 								const response = await sendBills(bills)
 								setVenmoInstructions(response)
@@ -426,6 +435,7 @@ const App = () => {
 								])
 								console.log(err)
 							}
+							setLoadSpinner(0);
 						}}
 						/>
 					{
@@ -433,6 +443,7 @@ const App = () => {
 							<Text key={uuidv4()}>{venmo}</Text>
 						))
 					}
+					<DisplaySpinner display={loadSpinner}/>
 					</Box>
 				</PageContent>
 			</Page>

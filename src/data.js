@@ -1,1 +1,1 @@
-export const subtitle = 'Easily calculate how much much everyone owes each other after an event such as a vaction.';
+export const subtitle = 'Fair finances among friends';
