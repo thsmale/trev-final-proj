@@ -28,60 +28,6 @@ import { subtitle } from './data.js';
 import { Bill, Row } from './model.js';
 import { v4 as uuidv4 } from 'uuid';
 
-const TestForm = () => {
-	const [value, setValue] = React.useState({});
-	return (
-	  <Form
-		value={value}
-		onChange={nextValue => setValue(nextValue)}
-		onSubmit={({ value }) => {}}
-	  >
-		<FormField name="event" htmlFor="text-input-event-id" label="Event">
-		  <TextInput 
-		  	id="text-input-event-id" 
-			name="event" 
-			placeholder="Event i.e restaurant, bar, concert"
-		  />
-		</FormField>
-		<FormField name="owner" htmlFor="text-input-owner-id" label="Owner">
-		  <TextInput 
-		  	id="text-input-owner-id" 
-			name="owner" 
-			placeholder="Owner i.e Trevor"
-		  />
-		</FormField>
-		<DateInput id="date-input-id"/>
-		<FormField name="date" htmlFor="date-input-id" label="Date">
-			<DateInput/>
-		</FormField>
-		<FormField name="description" htmlFor="description-id" label="Description">
-		  <TextInput 
-		  	id="description-id" 
-			name="description" 
-			placeholder="Remember when Arthur yaked"
-		/>
-		</FormField>
-		<FormField name="tax" htmlFor="tax-id" label="Tax">
-		  <TextInput 
-		  	id="tax-id" 
-			name="tax" 
-			placeholder="The tax on the bill. Not % percentages."
-		  />
-		</FormField>
-		<FormField name="tip" htmlFor="tip-id" label="Tip">
-		  <TextInput 
-		  	id="tip-id" 
-			name="tip" 
-			placeholder="The tip on the bill. Not % percentages."
-		  />
-		</FormField>
-		<Box direction="row" gap="medium">
-		  <Button type="submit" primary label="Submit" />
-		</Box>
-	   </Form>
-	)
-}
-
 /**
  * The eventName is used to identify an event such as going to Rileys bar 
  * @param {Object} props 
@@ -174,16 +120,12 @@ const DescriptionUserInterface = ({ description, updateBill }) => {
 
 const LabelDataTable = (props) => {
 	return (
-		<Grid columns='medium' pad={{ top: 'medium' }} gap='small'>
-			<Box>
-				<Text>Name</Text>
-			</Box>
-			<Box>
-				<Text>Item</Text>
-			</Box>
-			<Box>
-				<Text>Price</Text>
-			</Box>
+		<Grid>
+			<Text 
+				size="large" 
+				margin={{ top: "small", bottom: "small" }}
+				textAlign='center'
+			>Data Entry</Text>
 		</Grid>
 	);
 }
@@ -440,6 +382,7 @@ const BillFormUserInterface = ({ bill, updateBills }) => {
 			placeholder="Remember when Arthur yaked"
 		/>
 		</FormField>
+		<LabelDataTable/>
 		<TabUserInterface
 			tabs={bill.tabs}
 			updateBill={updateTabs}
