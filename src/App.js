@@ -3,6 +3,8 @@ import {
 	Box,
 	Button,
 	DateInput,
+	Form,
+	FormField,
 	Grid,
 	Grommet,
 	Page,
@@ -25,6 +27,60 @@ import { Add } from 'grommet-icons';
 import { subtitle } from './data.js';
 import { Bill, Row } from './model.js';
 import { v4 as uuidv4 } from 'uuid';
+
+const TestForm = () => {
+	const [value, setValue] = React.useState({});
+	return (
+	  <Form
+		value={value}
+		onChange={nextValue => setValue(nextValue)}
+		onSubmit={({ value }) => {}}
+	  >
+		<FormField name="event" htmlFor="text-input-event-id" label="Event">
+		  <TextInput 
+		  	id="text-input-event-id" 
+			name="event" 
+			placeholder="Event i.e restaurant, bar, concert"
+		  />
+		</FormField>
+		<FormField name="owner" htmlFor="text-input-owner-id" label="Owner">
+		  <TextInput 
+		  	id="text-input-owner-id" 
+			name="owner" 
+			placeholder="Owner i.e Trevor"
+		  />
+		</FormField>
+		<DateInput id="date-input-id"/>
+		<FormField name="date" htmlFor="date-input-id" label="Date">
+			<DateInput/>
+		</FormField>
+		<FormField name="description" htmlFor="description-id" label="Description">
+		  <TextInput 
+		  	id="description-id" 
+			name="description" 
+			placeholder="Remember when Arthur yaked"
+		/>
+		</FormField>
+		<FormField name="tax" htmlFor="tax-id" label="Tax">
+		  <TextInput 
+		  	id="tax-id" 
+			name="tax" 
+			placeholder="The tax on the bill. Not % percentages."
+		  />
+		</FormField>
+		<FormField name="tip" htmlFor="tip-id" label="Tip">
+		  <TextInput 
+		  	id="tip-id" 
+			name="tip" 
+			placeholder="The tip on the bill. Not % percentages."
+		  />
+		</FormField>
+		<Box direction="row" gap="medium">
+		  <Button type="submit" primary label="Submit" />
+		</Box>
+	   </Form>
+	)
+}
 
 /**
  * The eventName is used to identify an event such as going to Rileys bar 
@@ -168,6 +224,42 @@ const TabInputUserInterface = ({ tab, updateBill, id }) => {
 	);
 }
 
+const TabFormInputUserInterface = ({ tab, updateBill, id }) => {
+	return (
+		<>
+		<FormField name="name" htmlFor="name-input-id" label="Name">
+			<TextInput
+				id="name-input-id"
+				placeholder="Name i.e Arthur"
+				value={tab.name}
+				onChange={(event) => {
+					updateBill('name', event.target.value, id)
+				}}
+			/>
+		</FormField>
+		<FormField name="item" htmlFor="item-input-id" label="Item">
+			<TextInput
+				id = "item-input-id"
+				placeholder="Item i.e pizza"
+				value={tab.item}
+				onChange={(event) => {
+					updateBill('item', event.target.value, id)
+				}}
+			/>
+		</FormField>
+		<FormField name="price" htmlFor="price-input-id" label="Price">
+			<TextInput
+				placeholder="Price i.e 0.00"
+				value={tab.price}
+				onChange={(event) => {
+					updateBill('price', event.target.value, id)
+				}}
+			/>
+		</FormField>
+		</>
+	);
+}
+
 /**
  * 
  * @param {Object} props 
@@ -178,10 +270,9 @@ const TabInputUserInterface = ({ tab, updateBill, id }) => {
 const TabUserInterface = ({ tabs, updateBill, addTab }) => {
 	return (
 		<Grid>
-			<LabelDataTable />
 			{
 				tabs.map(tab => (
-					<TabInputUserInterface
+					<TabFormInputUserInterface
 						key={tab.id}
 						id={tab.id}
 						tab={tab}
@@ -293,6 +384,86 @@ const BillUserInterface = ({ bill, updateBills }) => {
 	)
 }
 
+/**
+ * TODO: Add description input and add mark required fields w/ red *
+ * @param {*} props 
+ * @returns 
+ */
+const BillFormUserInterface = ({ bill, updateBills }) => {
+	const [value, setValue] = React.useState({});
+	const updateBillMetaData = (property, value) => updateBills({
+		...bill,
+		[property]: value
+	})
+	const updateTabs = (property, value, id) => {
+		updateBills({
+			...bill,
+			tabs: bill.tabs.map(tab => {
+				if (tab.id === id)
+					tab[property] = value
+				return tab
+			})
+		})
+	}
+	const addTab = () => updateBills({
+		...bill,
+		tabs: [...bill.tabs, new Row()]
+	})
+
+	return (
+	  <Form
+		value={value}
+		onChange={nextValue => setValue(nextValue)}
+		onSubmit={({ value }) => {}}
+	  >
+		<FormField name="event" htmlFor="text-input-event-id" label="Event">
+		  <TextInput 
+		  	id="text-input-event-id" 
+			name="event" 
+			placeholder="Event i.e restaurant, bar, concert"
+		  />
+		</FormField>
+		<FormField name="owner" htmlFor="text-input-owner-id" label="Owner">
+		  <TextInput 
+		  	id="text-input-owner-id" 
+			name="owner" 
+			placeholder="Owner i.e Trevor"
+		  />
+		</FormField>
+		<FormField name="date" htmlFor="date-input-id" label="Date">
+			<DateInput/>
+		</FormField>
+		<FormField name="description" htmlFor="description-id" label="Description">
+		  <TextInput 
+		  	id="description-id" 
+			name="description" 
+			placeholder="Remember when Arthur yaked"
+		/>
+		</FormField>
+		<TabUserInterface
+			tabs={bill.tabs}
+			updateBill={updateTabs}
+			addTab={addTab}
+		/>
+		<FormField name="tax" htmlFor="tax-id" label="Tax">
+		  <TextInput 
+		  	id="tax-id" 
+			name="tax" 
+			placeholder="The tax on the bill. Not % percentages."
+		  />
+		</FormField>
+		<FormField name="tip" htmlFor="tip-id" label="Tip">
+		  <TextInput 
+		  	id="tip-id" 
+			name="tip" 
+			placeholder="The tip on the bill. Not % percentages."
+		  />
+		</FormField>
+	   </Form>
+	)
+}
+
+
 const sendBills = async (bills) => {
 	const response = await fetch('https://fastapi-1-i3987591.deta.app/bill', {
 		mode: 'cors',
@@ -326,7 +497,7 @@ const BillsUserInterface = ({ bills, setBills, updateBill }) => {
 			{
 				bills.map(bill => (
 					<Tab key={bill.id} title={bill.eventName === '' ? 'New bill' : bill.eventName}>
-						<BillUserInterface
+						<BillFormUserInterface
 							key={bill.id}
 							bill={bill}
 							updateBills={updateBill}
@@ -450,5 +621,7 @@ const App = () => {
 		</Grommet>
 	);
 }
+
+
 
 export default App;
